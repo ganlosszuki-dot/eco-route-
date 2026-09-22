@@ -1,1 +1,266 @@
+  // =========================
+  // 時間表示
+  // =========================
 
+  function formatTime(seconds) {
+    const minutes = Math.round(seconds / 60);
+
+    if (minutes < 60) {
+      return minutes + " 分";
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const rest = minutes % 60;
+
+    if (rest === 0) {
+      return hours + "時間";
+    }
+
+    return hours + "時間 " + rest + "分";
+  }
+
+
+  // =========================
+  // ルート表示
+  // =========================
+
+  function drawRoute(route, profile) {
+
+    let line;
+
+    if (profile === "foot") {
+
+      line = L.polyline(
+        route.geometry.coordinates.map(
+          p => [p[1], p[0]]
+        ),
+        {
+          weight: 6
+        }
+      );
+
+    } else if (profile === "bike") {
+
+      line = L.polyline(
+        route.geometry.coordinates.map(
+          p => [p[1], p[0]]
+        ),
+        {
+          weight: 6,
+          dashArray: "10 8"
+        }
+      );
+
+    } else {
+
+      line = L.polyline(
+        route.geometry.coordinates.map(
+          p => [p[1], p[0]]
+        ),
+        {
+          weight: 6
+        }
+      );
+
+    }
+
+    line.addTo(map);
+
+    routeLayers.push(line);
+  }
+
+
+  // =========================
+  // 検索
+  // =========================
+
+  async function searchRoutes() {
+
+    const startName =
+      document.getElementById("start").value;
+
+    const endName =
+      document.getElementById("end").value;
+
+    const message =
+      document.getElementById("message");
+
+
+    if (!startName || !endName) {
+
+      message.textContent =
+        "出発地と目的地を入力してください。";
+
+      return;
+    }
+
+
+    message.textContent =
+      "🔍 ルートを検索しています…";
+
+
+    // 前のルートを削除
+
+    routeLayers.forEach(
+      layer => map.removeLayer(layer)
+    );
+
+    routeLayers = [];
+
+
+    markers.forEach(
+      marker => map.removeLayer(marker)
+    );
+
+    markers = [];
+
+
+    try {
+
+      // =====================
+      // 地名検索
+      // =====================
+
+      const start =
+        await geocode(startName);
+
+      const end =
+        await geocode(endName);
+
+
+      // =====================
+      // マーカー
+      // =====================
+
+      const startMarker =
+        L.marker([start.lat, start.lon])
+          .addTo(map)
+          .bindPopup("出発地");
+
+      const endMarker =
+        L.marker([end.lat, end.lon])
+          .addTo(map)
+          .bindPopup("目的地");
+
+
+      markers.push(startMarker);
+      markers.push(endMarker);
+
+
+      // 地図を移動
+
+      map.fitBounds([
+        [start.lat, start.lon],
+        [end.lat, end.lon]
+      ]);
+
+
+      // =====================
+      // ルート取得
+      // =====================
+
+      const walk =
+        await getRoute("foot", start, end);
+
+      const bike =
+        await getRoute("bike", start, end);
+
+      const car =
+        await getRoute("driving", start, end);
+
+
+      // =====================
+      // ルート描画
+      // =====================
+
+      drawRoute(walk, "foot");
+
+      drawRoute(bike, "bike");
+
+      drawRoute(car, "car");
+
+
+      // =====================
+      // データ表示
+      // =====================
+
+      // 🚶 徒歩
+
+      document.getElementById("walkDistance").textContent =
+        formatDistance(walk.distance);
+
+      // 徒歩：約4.5km/h
+      const walkTime =
+        walk.distance / 1.25;
+
+      document.getElementById("walkTime").textContent =
+        formatTime(walkTime);
+
+
+      // 🚲 自転車
+
+      document.getElementById("bikeDistance").textContent =
+        formatDistance(bike.distance);
+
+      // 自転車：約15km/h
+      const bikeTime =
+        bike.distance / 4.17;
+
+      document.getElementById("bikeTime").textContent =
+        formatTime(bikeTime);
+
+
+      // 🚗 車
+
+      document.getElementById("carDistance").textContent =
+        formatDistance(car.distance);
+
+      document.getElementById("carTime").textContent =
+        formatTime(car.duration);
+
+
+      // =====================
+      // CO₂
+      // =====================
+
+      const carCO2 =
+        Math.round(
+          car.distance / 1000 * 130
+        );
+
+
+      document.getElementById("carCO2").textContent =
+        carCO2 + " g";
+
+
+      // =====================
+      // 環境にやさしいカードを強調
+      // =====================
+
+      document
+        .getElementById("walkCard")
+        .classList.add("best");
+
+      document
+        .getElementById("bikeCard")
+        .classList.remove("best");
+
+      document
+        .getElementById("carCard")
+        .classList.remove("best");
+
+
+      message.textContent =
+        "🌱 ルート比較が完了しました！";
+
+
+    } catch (error) {
+
+      console.error(error);
+
+      message.textContent =
+        "⚠️ ルートを取得できませんでした。";
+
+    }
+
+  }
