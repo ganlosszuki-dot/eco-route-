@@ -1,1164 +1,487 @@
 <!DOCTYPE html>
 <html lang="ja">
-
 <head>
-
   <meta charset="UTF-8">
-
-  <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>🌱 Eco Route</title>
 
-  <!-- Leaflet -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  >
+  />
 
   <style>
-
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       margin: 0;
-      font-family: Arial, "Noto Sans JP", sans-serif;
-      background: #f4f7f5;
-      color: #222;
+      font-family: sans-serif;
+      background: #f5fff5;
+      color: #333;
     }
-
-    /* ヘッダー */
 
     header {
-      background: #2e7d32;
+      background: #4caf50;
       color: white;
-      padding: 20px;
       text-align: center;
-    }
-
-    header h1 {
-      margin: 0;
+      padding: 18px;
       font-size: 28px;
+      font-weight: bold;
     }
-
-    header p {
-      margin: 8px 0 0;
-      font-size: 14px;
-    }
-
-
-    /* 検索エリア */
 
     .search-box {
+      padding: 15px;
       background: white;
-      padding: 20px;
-      margin: 20px auto;
-      max-width: 1000px;
-      border-radius: 15px;
-      box-shadow: 0 3px 12px rgba(0,0,0,0.08);
-    }
-
-    .search-row {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
+      justify-content: center;
     }
 
     input {
-      flex: 1;
-      min-width: 220px;
-      padding: 13px;
+      padding: 12px;
+      font-size: 16px;
+      width: 250px;
       border: 1px solid #ccc;
       border-radius: 8px;
-      font-size: 16px;
     }
 
     button {
-      padding: 13px 22px;
+      padding: 12px 20px;
+      font-size: 16px;
       border: none;
       border-radius: 8px;
-      background: #2e7d32;
+      background: #4caf50;
       color: white;
-      font-size: 16px;
-      font-weight: bold;
       cursor: pointer;
     }
 
     button:hover {
-      background: #1b5e20;
+      background: #388e3c;
     }
-
-
-    /* 地図 */
 
     #map {
-      width: 100%;
       height: 450px;
-      margin-bottom: 25px;
+      width: 100%;
     }
-
-
-    /* 比較エリア */
-
-    .comparison {
-      max-width: 1000px;
-      margin: 0 auto 40px;
-      padding: 0 15px;
-    }
-
-    .comparison h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-
-
-    /* カード */
 
     .cards {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      padding: 20px;
     }
 
     .card {
       background: white;
-      border-radius: 18px;
-      padding: 22px;
+      border-radius: 15px;
+      padding: 20px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-      position: relative;
-      transition: transform 0.2s;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
     }
 
-    .card:hover {
-      transform: translateY(-4px);
+    .card.best {
+      border: 3px solid #4caf50;
     }
 
     .icon {
-      font-size: 45px;
-      margin-bottom: 5px;
+      font-size: 40px;
     }
 
-    .card h3 {
-      margin: 5px 0 15px;
+    h3 {
+      margin: 10px 0;
       font-size: 22px;
     }
 
     .info {
-      margin: 12px 0;
-      font-size: 15px;
-    }
-
-    .big-number {
-      font-size: 25px;
-      font-weight: bold;
-      margin-top: 5px;
-    }
-
-    .co2 {
-      margin-top: 18px;
-      padding: 12px;
-      border-radius: 10px;
-      background: #eef7ef;
-    }
-
-    .co2-number {
-      font-size: 22px;
-      font-weight: bold;
-      color: #2e7d32;
-    }
-
-
-    /* 環境におすすめ */
-
-    .best {
-      border: 4px solid #4caf50;
-    }
-
-    .best-label {
-      position: absolute;
-      top: -13px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #4caf50;
-      color: white;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: bold;
-      white-space: nowrap;
-    }
-
-
-    /* メッセージ */
-
-    #message {
-      text-align: center;
-      margin: 15px;
-      font-weight: bold;
-    }
-
-
-    /* CO2説明 */
-
-    .note {
-      max-width: 1000px;
-      margin: 0 auto 40px;
-      padding: 15px;
-      background: #fffde7;
-      border-radius: 10px;
-      font-size: 13px;
+      margin: 10px 0;
       color: #555;
     }
 
-
-    /* スマホ対応 */
-
-    @media (max-width: 750px) {
-
-      .cards {
-        grid-template-columns: 1fr;
-      }
-
-      #map {
-        height: 350px;
-      }
-
-      header h1 {
-        font-size: 23px;
-      }
-
+    .big-number {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 4px;
     }
 
+    .co2 {
+      margin-top: 15px;
+      color: #388e3c;
+      font-weight: bold;
+    }
+
+    .co2-number {
+      font-size: 20px;
+      margin-top: 4px;
+    }
   </style>
-
 </head>
-
 
 <body>
 
-
 <header>
-
-  <h1>🌱 Eco Route</h1>
-
-  <p>
-    環境にやさしい移動ルートを比較しよう
-  </p>
-
+  🌱 Eco Route
 </header>
 
-
-<!-- 検索 -->
-
 <div class="search-box">
-
-  <div class="search-row">
-
-    <input
-      id="start"
-      type="text"
-      placeholder="出発地（例：京都駅）"
-    >
-
-    <input
-      id="end"
-      type="text"
-      placeholder="目的地（例：清水寺）"
-    >
-
-    <button onclick="searchRoutes()">
-      🔍 ルート検索
-    </button>
-
-  </div>
-
+  <input id="start" type="text" placeholder="出発地">
+  <input id="end" type="text" placeholder="目的地">
+  <button onclick="searchRoute()">ルート検索</button>
 </div>
-
-
-<!-- メッセージ -->
-
-<div id="message"></div>
-
-
-<!-- 地図 -->
 
 <div id="map"></div>
 
+<div class="cards">
 
-<!-- 比較 -->
+  <!-- 徒歩 -->
+  <div class="card best">
+    <div class="icon">🚶</div>
+    <h3>徒歩</h3>
 
-<section class="comparison">
-
-  <h2>
-    🚶🚲‎🚗 ࡄ ルート比較
-  </h2>
-
-
-  <div class="cards">
-
-
-    <!-- 徒歩 -->
-
-    <div class="card best" id="walkCard">
-
-      <div class="best-label">
-        🌱 環境におすすめ
-      </div>
-
-      <div class="icon">
-        🚶
-      </div>
-
-      <h3>
-        徒歩
-      </h3>
-
-      <div class="info">
-        距離
-
-        <div
-          class="big-number"
-          id="walkDistance"
-        >
-          --
-        </div>
-      </div>
-
-      <div class="info">
-        時間
-
-        <div
-          class="big-number"
-          id="walkTime"
-        >
-          --
-        </div>
-      </div>
-
-      <div class="co2">
-        🌱 CO₂
-
-        <div class="co2-number">
-          0 g
-        </div>
-      </div>
-
+    <div class="info">
+      距離
+      <div class="big-number" id="walk-distance">--</div>
     </div>
 
-
-    <!-- 自転車 -->
-
-    <div class="card" id="bikeCard">
-
-      <div class="icon">
-        🚲
-      </div>
-
-      <h3>
-        自転車
-      </h3>
-
-      <div class="info">
-        距離
-
-        <div
-          class="big-number"
-          id="bikeDistance"
-        >
-          --
-        </div>
-      </div>
-
-      <div class="info">
-        時間
-
-        <div
-          class="big-number"
-          id="bikeTime"
-        >
-          --
-        </div>
-      </div>
-
-      <div class="co2">
-        🌱 CO₂
-
-        <div class="co2-number">
-          0 g
-        </div>
-      </div>
-
+    <div class="info">
+      時間
+      <div class="big-number" id="walk-time">--</div>
     </div>
 
-
-    <!-- 車 -->
-
-    <div class="card" id="carCard">
-
-      <div class="icon">
-        ‎🚗 ࡄ
-      </div>
-
-      <h3>
-        車
-      </h3>
-
-      <div class="info">
-        距離
-
-        <div
-          class="big-number"
-          id="carDistance"
-        >
-          --
-        </div>
-      </div>
-
-      <div class="info">
-        時間
-
-        <div
-          class="big-number"
-          id="carTime"
-        >
-          --
-        </div>
-      </div>
-
-      <div class="co2">
-
-        💨 CO₂
-
-        <div
-          class="co2-number"
-          id="carCO2"
-        >
-          --
-        </div>
-
-      </div>
-
+    <div class="co2">
+      🌱 CO₂
+      <div class="co2-number">0 g</div>
     </div>
-
-
-    <!-- 電車 -->
-
-    <div class="card">
-
-      <div class="icon">
-        🚃
-      </div>
-
-      <h3>
-        電車
-      </h3>
-
-      <div class="info">
-        距離
-
-        <div class="big-number">
-          --
-        </div>
-      </div>
-
-      <div class="info">
-        時間
-
-        <div class="big-number">
-          --
-        </div>
-      </div>
-
-      <div class="co2">
-
-        🌱 CO₂
-
-        <div class="co2-number">
-          --
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <!-- バス -->
-
-    <div class="card">
-
-      <div class="icon">
-        🚌
-      </div>
-
-      <h3>
-        バス
-      </h3>
-
-      <div class="info">
-        距離
-
-        <div class="big-number">
-          --
-        </div>
-      </div>
-
-      <div class="info">
-        時間
-
-        <div class="big-number">
-          --
-        </div>
-      </div>
-
-      <div class="co2">
-
-        🌱 CO₂
-
-        <div class="co2-number">
-          --
-        </div>
-
-      </div>
-
-    </div>
-
-
   </div>
 
-</section>
+
+  <!-- 自転車 -->
+  <div class="card">
+    <div class="icon">🚲</div>
+    <h3>自転車</h3>
+
+    <div class="info">
+      距離
+      <div class="big-number" id="bike-distance">--</div>
+    </div>
+
+    <div class="info">
+      時間
+      <div class="big-number" id="bike-time">--</div>
+    </div>
+
+    <div class="co2">
+      🌱 CO₂
+      <div class="co2-number">0 g</div>
+    </div>
+  </div>
 
 
-<div class="note">
+  <!-- 車 -->
+  <div class="card">
+    <div class="icon">🚗</div>
+    <h3>車</h3>
 
-  ※ CO₂排出量は簡易的な比較のための推定値です。
-  実際の排出量は車種・道路状況・乗車人数などによって変わります。
+    <div class="info">
+      距離
+      <div class="big-number" id="car-distance">--</div>
+    </div>
 
-  <br>
+    <div class="info">
+      時間
+      <div class="big-number" id="car-time">--</div>
+    </div>
 
-  ※ 徒歩は約4.5 km/h、
-  自転車は約15 km/hとして時間を計算しています。
+    <div class="co2">
+      🌱 CO₂
+      <div class="co2-number" id="car-co2">--</div>
+    </div>
+  </div>
+
+
+  <!-- 電車 -->
+  <div class="card">
+    <div class="icon">🚃</div>
+    <h3>電車</h3>
+
+    <div class="info">
+      距離
+      <div class="big-number">--</div>
+    </div>
+
+    <div class="info">
+      時間
+      <div class="big-number">--</div>
+    </div>
+
+    <div class="co2">
+      🌱 CO₂
+      <div class="co2-number">--</div>
+    </div>
+  </div>
+
+
+  <!-- バス -->
+  <div class="card">
+    <div class="icon">🚌</div>
+    <h3>バス</h3>
+
+    <div class="info">
+      距離
+      <div class="big-number">--</div>
+    </div>
+
+    <div class="info">
+      時間
+      <div class="big-number">--</div>
+    </div>
+
+    <div class="co2">
+      🌱 CO₂
+      <div class="co2-number">--</div>
+    </div>
+  </div>
 
 </div>
 
 
-<!-- Leaflet -->
-
-<script
-  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
-</script>
-
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
 
-
-  // =========================
   // 地図
-  // =========================
-
-  const map =
-    L.map("map").setView(
-      [35.0116, 135.7681],
-      13
-    );
-
+  const map = L.map('map').setView([35.0116, 135.7681], 13);
 
   L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
-      attribution:
-        "&copy; OpenStreetMap contributors"
+      attribution: '&copy; OpenStreetMap contributors'
     }
   ).addTo(map);
 
 
-  // =========================
-  // ルート保存用
-  // =========================
-
-  let routeLayers = [];
-
-  let markers = [];
+  let routeLines = [];
 
 
-  // =========================
-  // 地名 → 座標
-  // =========================
-
+  // 住所 → 緯度経度
   async function geocode(place) {
 
     const url =
-      "https://nominatim.openstreetmap.org/search" +
-      "?format=json" +
-      "&q=" +
-      encodeURIComponent(place) +
-      "&limit=1";
+      `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`;
 
-
-    const response =
-      await fetch(url);
-
-
-    const data =
-      await response.json();
-
+    const response = await fetch(url);
+    const data = await response.json();
 
     if (data.length === 0) {
-
-      throw new Error(
-        place + " が見つかりません"
-      );
-
+      throw new Error(place + " が見つかりませんでした");
     }
 
-
     return {
-
-      lat:
-        parseFloat(data[0].lat),
-
-      lon:
-        parseFloat(data[0].lon)
-
+      lat: parseFloat(data[0].lat),
+      lon: parseFloat(data[0].lon)
     };
-
   }
 
 
-  // =========================
-  // ルート検索
-  // =========================
+  // 距離を表示
+  function formatDistance(meters) {
 
-  async function getRoute(
-    profile,
-    start,
-    end
-  ) {
+    if (meters < 1000) {
+      return Math.round(meters) + " m";
+    }
+
+    return (meters / 1000).toFixed(1) + " km";
+  }
+
+
+  // 時間を表示
+  function formatTime(minutes) {
+
+    minutes = Math.round(minutes);
+
+    if (minutes < 60) {
+      return minutes + "分";
+    }
+
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+
+    return hours + "時間" + mins + "分";
+  }
+
+
+  // OSRMでルート取得
+  async function getRoute(start, end, profile) {
 
     const url =
       `https://router.project-osrm.org/route/v1/${profile}/` +
       `${start.lon},${start.lat};${end.lon},${end.lat}` +
       `?overview=full&geometries=geojson`;
 
-
-    const response =
-      await fetch(url);
-
-
-    const data =
-      await response.json();
-
+    const response = await fetch(url);
+    const data = await response.json();
 
     if (data.code !== "Ok") {
-
-      throw new Error(
-        profile +
-        " のルート取得に失敗しました"
-      );
-
+      throw new Error("ルートを取得できませんでした");
     }
-
 
     return data.routes[0];
-
   }
 
 
-  // =========================
-  // 距離表示
-  // =========================
+  // ルート検索
+  async function searchRoute() {
 
-  function formatDistance(meters) {
+    const startText =
+      document.getElementById("start").value;
 
-    if (meters < 1000) {
+    const endText =
+      document.getElementById("end").value;
 
-      return (
-        Math.round(meters) +
-        " m"
-      );
 
-    }
-
-
-    return (
-      (meters / 1000).toFixed(2) +
-      " km"
-    );
-
-  }
-
-
-  // =========================
-  // 時間表示
-  // =========================
-
-  function formatTime(seconds) {
-
-    const minutes =
-      Math.round(seconds / 60);
-
-
-    if (minutes < 60) {
-
-      return (
-        minutes +
-        " 分"
-      );
-
-    }
-
-
-    const hours =
-      Math.floor(minutes / 60);
-
-
-    const rest =
-      minutes % 60;
-
-
-    if (rest === 0) {
-
-      return (
-        hours +
-        "時間"
-      );
-
-    }
-
-
-    return (
-      hours +
-      "時間 " +
-      rest +
-      "分"
-    );
-
-  }
-
-
-  // =========================
-  // ルート表示
-  // =========================
-
-  function drawRoute(
-    route,
-    profile
-  ) {
-
-    let line;
-
-
-    if (profile === "foot") {
-
-      line =
-        L.polyline(
-
-          route.geometry.coordinates.map(
-            p => [p[1], p[0]]
-          ),
-
-          {
-            weight: 6
-          }
-
-        );
-
-    }
-
-    else if (profile === "bike") {
-
-      line =
-        L.polyline(
-
-          route.geometry.coordinates.map(
-            p => [p[1], p[0]]
-          ),
-
-          {
-            weight: 6,
-            dashArray: "10 8"
-          }
-
-        );
-
-    }
-
-    else {
-
-      line =
-        L.polyline(
-
-          route.geometry.coordinates.map(
-            p => [p[1], p[0]]
-          ),
-
-          {
-            weight: 6
-          }
-
-        );
-
-    }
-
-
-    line.addTo(map);
-
-
-    routeLayers.push(line);
-
-  }
-
-
-  // =========================
-  // 検索
-  // =========================
-
-  async function searchRoutes() {
-
-
-    const startName =
-      document.getElementById(
-        "start"
-      ).value;
-
-
-    const endName =
-      document.getElementById(
-        "end"
-      ).value;
-
-
-    const message =
-      document.getElementById(
-        "message"
-      );
-
-
-    if (
-      !startName ||
-      !endName
-    ) {
-
-      message.textContent =
-        "出発地と目的地を入力してください。";
-
+    if (!startText || !endText) {
+      alert("出発地と目的地を入力してください！");
       return;
-
     }
-
-
-    message.textContent =
-      "🔍 ルートを検索しています…";
-
-
-    // 前のルートを削除
-
-    routeLayers.forEach(
-      layer =>
-        map.removeLayer(layer)
-    );
-
-
-    routeLayers = [];
-
-
-    // 前のマーカーを削除
-
-    markers.forEach(
-      marker =>
-        map.removeLayer(marker)
-    );
-
-
-    markers = [];
 
 
     try {
 
-
-      // =====================
-      // 地名検索
-      // =====================
-
-      const start =
-        await geocode(
-          startName
-        );
+      // 地名を緯度経度に変換
+      const start = await geocode(startText);
+      const end = await geocode(endText);
 
 
-      const end =
-        await geocode(
-          endName
-        );
+      // 地図を移動
+      map.setView(
+        [start.lat, start.lon],
+        13
+      );
 
 
-      // =====================
-      // マーカー
-      // =====================
+      // 前のルートを削除
+      routeLines.forEach(line => {
+        map.removeLayer(line);
+      });
 
-      const startMarker =
-        L.marker([
-          start.lat,
-          start.lon
-        ])
+      routeLines = [];
+
+
+      // 出発地点
+      L.marker([start.lat, start.lon])
         .addTo(map)
-        .bindPopup("出発地");
+        .bindPopup("出発地")
+        .openPopup();
 
 
-      const endMarker =
-        L.marker([
-          end.lat,
-          end.lon
-        ])
+      // 目的地点
+      L.marker([end.lat, end.lon])
         .addTo(map)
         .bindPopup("目的地");
 
 
-      markers.push(
-        startMarker
-      );
-
-      markers.push(
-        endMarker
-      );
-
-
-      // =====================
-      // 地図を移動
-      // =====================
-
-      map.fitBounds([
-
-        [
-          start.lat,
-          start.lon
-        ],
-
-        [
-          end.lat,
-          end.lon
-        ]
-
-      ]);
-
-
-      // =====================
-      // ルート取得
-      // =====================
-
-      const walk =
-        await getRoute(
-          "foot",
-          start,
-          end
-        );
-
-
-      const bike =
-        await getRoute(
-          "bike",
-          start,
-          end
-        );
-
-
-      const car =
-        await getRoute(
-          "driving",
-          start,
-          end
-        );
-
-
-      // =====================
-      // ルート描画
-      // =====================
-
-      drawRoute(
-        walk,
-        "foot"
-      );
-
-
-      drawRoute(
-        bike,
-        "bike"
-      );
-
-
-      drawRoute(
-        car,
-        "car"
-      );
-
-
-      // =====================
       // 徒歩
-      // =====================
-
-      document.getElementById(
-        "walkDistance"
-      ).textContent =
-        formatDistance(
-          walk.distance
-        );
+      const walk =
+        await getRoute(start, end, "walking");
 
 
-      /*
-       * 徒歩
-       * 約4.5 km/h
-       *
-       * 4.5 km = 4500 m
-       * 1時間 = 3600秒
-       *
-       * 4500 ÷ 3600 = 1.25 m/s
-       */
+      // 自転車
+      const bike =
+        await getRoute(start, end, "cycling");
+
+
+      // 車
+      const car =
+        await getRoute(start, end, "driving");
+
+
+      // 徒歩ルートを表示
+      const walkLine =
+        L.geoJSON(walk.geometry)
+          .addTo(map);
+
+      routeLines.push(walkLine);
+
+
+      // 距離
+      document.getElementById("walk-distance")
+        .textContent =
+        formatDistance(walk.distance);
+
+      document.getElementById("bike-distance")
+        .textContent =
+        formatDistance(bike.distance);
+
+      document.getElementById("car-distance")
+        .textContent =
+        formatDistance(car.distance);
+
+
+      // =========================
+      // 徒歩の時間
+      // 時速4.5km
+      // =========================
 
       const walkTime =
-        walk.distance / 1.25;
+        (walk.distance / 1000) / 4.5 * 60;
+
+      document.getElementById("walk-time")
+        .textContent =
+        formatTime(walkTime);
 
 
-      document.getElementById(
-        "walkTime"
-      ).textContent =
-        formatTime(
-          walkTime
-        );
-
-
-      // =====================
-      // 自転車
-      // =====================
-
-      document.getElementById(
-        "bikeDistance"
-      ).textContent =
-        formatDistance(
-          bike.distance
-        );
-
-
-      /*
-       * 自転車
-       * 約15 km/h
-       *
-       * 15 km = 15000 m
-       * 1時間 = 3600秒
-       *
-       * 15000 ÷ 3600
-       * ≒ 4.17 m/s
-       */
+      // =========================
+      // 自転車の時間
+      // 時速15km
+      // =========================
 
       const bikeTime =
-        bike.distance / 4.17;
+        (bike.distance / 1000) / 15 * 60;
+
+      document.getElementById("bike-time")
+        .textContent =
+        formatTime(bikeTime);
 
 
-      document.getElementById(
-        "bikeTime"
-      ).textContent =
-        formatTime(
-          bikeTime
-        );
+      // =========================
+      // 🚗 車の時間
+      // ★ここを時速50kmに設定！
+      // =========================
+
+      const carTime =
+        (car.distance / 1000) / 50 * 60;
+
+      document.getElementById("car-time")
+        .textContent =
+        formatTime(carTime);
 
 
-      // =====================
-      // 車
-      // =====================
-
-      document.getElementById(
-        "carDistance"
-      ).textContent =
-        formatDistance(
-          car.distance
-        );
-
-
-      // 車はOSRMのルート時間を使用
-
-      document.getElementById(
-        "carTime"
-      ).textContent =
-        formatTime(
-          car.duration
-        );
-
-
-      // =====================
-      // CO₂
-      // =====================
+      // =========================
+      // 車のCO₂
+      // 1kmあたり130g
+      // =========================
 
       const carCO2 =
-        Math.round(
-          car.distance /
-          1000 *
-          130
-        );
+        (car.distance / 1000) * 130;
+
+      document.getElementById("car-co2")
+        .textContent =
+        Math.round(carCO2) + " g";
 
 
-      document.getElementById(
-        "carCO2"
-      ).textContent =
-        carCO2 +
-        " g";
+    } catch (error) {
 
+      console.error(error);
 
-      // =====================
-      // 環境にやさしいカードを強調
-      // =====================
-
-      document
-        .getElementById(
-          "walkCard"
-        )
-        .classList.add(
-          "best"
-        );
-
-
-      document
-        .getElementById(
-          "bikeCard"
-        )
-        .classList.remove(
-          "best"
-        );
-
-
-      document
-        .getElementById(
-          "carCard"
-        )
-        .classList.remove(
-          "best"
-        );
-
-
-      message.textContent =
-        "🌱 ルート比較が完了しました！";
-
-
-    }
-
-    catch (error) {
-
-      console.error(
-        error
+      alert(
+        "ルート検索でエラーが発生しました。\n" +
+        error.message
       );
-
-
-      message.textContent =
-        "⚠️ ルートを取得できませんでした。";
 
     }
 
   }
 
-
 </script>
 
-
 </body>
-
 </html>
