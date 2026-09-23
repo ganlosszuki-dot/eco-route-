@@ -12,11 +12,7 @@
   />
 
   <style>
-   <div class="note">
-  <strong>注記</strong><br>
-  車の所要時間は、時速50kmで走行すると仮定して計算しています。<br>
-  実際の所要時間は道路状況や交通状況などによって異なります。
-</div> body {
+    body {
       margin: 0;
       font-family: sans-serif;
       background: #f5fff5;
@@ -116,6 +112,17 @@
     .co2-number {
       font-size: 20px;
       margin-top: 4px;
+    }
+
+    /* 注記 */
+    .note {
+      margin: 10px 20px 30px;
+      padding: 15px;
+      background: #f0f0f0;
+      border-radius: 10px;
+      font-size: 14px;
+      color: #555;
+      line-height: 1.7;
     }
   </style>
 </head>
@@ -245,6 +252,14 @@
     </div>
   </div>
 
+</div>
+
+
+<!-- 注記 -->
+<div class="note">
+  <strong>注記</strong><br>
+  車の所要時間は、時速50kmで走行すると仮定して計算しています。<br>
+  実際の所要時間は道路状況や交通状況などによって異なります。
 </div>
 
 
@@ -448,7 +463,7 @@
 
       // =========================
       // 🚗 車の時間
-      // ★ここを時速50kmに設定！
+      // 時速50kmで計算
       // =========================
 
       const carTime =
