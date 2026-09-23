@@ -844,50 +844,183 @@ function findStationColumn(
 // 🚃 電車を探す
 // ==================================================
 
-function findNextTrain(
-  startStation,
-  endStation
-) {
+  // ==================================================
+// 🚃 地下鉄の路線情報
+// ==================================================
+
+const karasumaStations = [
+
+  "国際会館",
+  "松ヶ崎",
+  "北山",
+  "北大路",
+  "鞍馬口",
+  "今出川",
+  "丸太町",
+  "烏丸御池",
+  "四条",
+  "五条",
+  "京都",
+  "九条",
+  "十条",
+  "くいな橋",
+  "竹田"
+
+];
+
+
+const tozaiStations = [
+
+  "六地蔵",
+  "石田",
+  "醍醐",
+  "小野",
+  "椥辻",
+  "東野",
+  "山科",
+  "御陵",
+  "蹴上",
+  "東山",
+  "三条京阪",
+  "京都市役所前",
+  "烏丸御池",
+  "二条城前",
+  "二条",
+  "西大路御池",
+  "太秦天神川",
+
+  // 東西線からの直通区間
+  "四宮",
+  "びわ湖浜大津"
+
+];
+
+
+// ==================================================
+// 🚃 駅がどの路線か調べる
+// ==================================================
+
+function getStationLine(station) {
+
+  if (
+    karasumaStations.includes(station)
+  ) {
+
+    return "karasuma";
+
+  }
+
+
+  if (
+    tozaiStations.includes(station)
+  ) {
+
+    return "tozai";
+
+  }
+
+
+  return null;
+
+}
+
+
+// ==================================================
+// 🚃 指定した路線のCSV一覧
+// ==================================================
+
+function getLineFiles(line) {
 
   const holiday =
     isHolidaySchedule();
 
 
-  const currentMinutes =
-    getCurrentMinutes();
+  if (line === "karasuma") {
+
+    return [
+
+      holiday
+        ? "karasumaHolidayUp"
+        : "karasumaWeekdayUp",
+
+      holiday
+        ? "karasumaHolidayDown"
+        : "karasumaWeekdayDown"
+
+    ];
+
+  }
 
 
-  let candidates = [];
+  if (line === "tozai") {
+
+    return [
+
+      holiday
+        ? "tozaiHolidayUp"
+        : "tozaiWeekdayUp",
+
+      holiday
+        ? "tozaiHolidayDown"
+        : "tozaiWeekdayDown"
+
+    ];
+
+  }
 
 
-  // ==============================================
-  // 使用するCSV
-  // ==============================================
+  return [];
 
-  const files = [
-
-    holiday
-      ? "karasumaHolidayUp"
-      : "karasumaWeekdayUp",
-
-    holiday
-      ? "karasumaHolidayDown"
-      : "karasumaWeekdayDown",
-
-    holiday
-      ? "tozaiHolidayUp"
-      : "tozaiWeekdayUp",
-
-    holiday
-      ? "tozaiHolidayDown"
-      : "tozaiWeekdayDown"
-
-  ];
+}
 
 
-  // ==============================================
-  // 4つの時刻表を調べる
-  // ==============================================
+// ==================================================
+// 🚃 指定時刻以降の電車を探す
+// ==================================================
+
+function findNextTrainAfter(
+  startStation,
+  endStation,
+  afterMinutes
+) {
+
+  const line =
+    getStationLine(
+      startStation
+    );
+
+
+  if (!line) {
+    return null;
+  }
+
+
+  const endLine =
+    getStationLine(
+      endStation
+    );
+
+
+  if (
+    !endLine ||
+    endLine !== line
+  ) {
+
+    return null;
+
+  }
+
+
+  const files =
+    getLineFiles(line);
+
+
+  const candidates = [];
+
+
+  // ================================================
+  // 上り・下り両方を見る
+  // ================================================
 
   for (
     const fileName of files
@@ -902,21 +1035,23 @@ function findNextTrain(
     }
 
 
+    // 4行目が駅名
+    const headers =
+      rows[3] || [];
+
+
     const startIndex =
-      findStationColumn(
-        rows,
+      headers.indexOf(
         startStation
       );
 
 
     const endIndex =
-      findStationColumn(
-        rows,
+      headers.indexOf(
         endStation
       );
 
 
-    // 駅がそのCSVにない
     if (
       startIndex === -1 ||
       endIndex === -1
@@ -927,9 +1062,9 @@ function findNextTrain(
     }
 
 
-    // ==========================================
-    // 時刻表を1本ずつ確認
-    // ==========================================
+    // ==============================================
+    // 各電車を確認
+    // ==============================================
 
     for (
       let i = 4;
@@ -968,51 +1103,26 @@ function findNextTrain(
       }
 
 
-      // ========================================
-      // 到着駅が出発駅より後になる電車
-      // ========================================
+      // 出発が指定時刻より前なら除外
+      if (
+        startTime < afterMinutes
+      ) {
+
+        continue;
+
+      }
+
 
       let travelTime =
         endTime - startTime;
 
 
-      // 日付をまたぐ場合
+      // 深夜をまたぐ場合
       if (
         travelTime < 0
       ) {
 
         travelTime += 24 * 60;
-
-      }
-
-
-      // ========================================
-      // 次の電車かどうか
-      // ========================================
-
-      let waitTime =
-        startTime - currentMinutes;
-
-
-      // 深夜の電車
-      if (
-        waitTime < 0
-      ) {
-
-        waitTime += 24 * 60;
-
-      }
-
-
-      // ========================================
-      // 24時間以上は除外
-      // ========================================
-
-      if (
-        waitTime >= 24 * 60
-      ) {
-
-        continue;
 
       }
 
@@ -1029,10 +1139,7 @@ function findNextTrain(
           endTime,
 
         travelTime:
-          travelTime,
-
-        waitTime:
-          waitTime
+          travelTime
 
       });
 
@@ -1040,10 +1147,6 @@ function findNextTrain(
 
   }
 
-
-  // ==============================================
-  // 次に近い電車を選択
-  // ==============================================
 
   if (
     candidates.length === 0
@@ -1054,9 +1157,10 @@ function findNextTrain(
   }
 
 
+  // 一番早く出発する電車
   candidates.sort(
     (a, b) =>
-      a.waitTime - b.waitTime
+      a.startTime - b.startTime
   );
 
 
@@ -1066,88 +1170,403 @@ function findNextTrain(
 
 
 // ==================================================
-// 🚃 分 → 5:20形式
+// 🚃 現在時刻から次の電車
 // ==================================================
 
-function minutesToTime(minutes) {
+function findDirectTrain(
+  startStation,
+  endStation
+) {
 
-  minutes =
-    minutes % (24 * 60);
+  return findNextTrainAfter(
 
+    startStation,
+    endStation,
 
-  const hour =
-    Math.floor(
-      minutes / 60
-    );
+    getCurrentMinutes()
 
-
-  const minute =
-    minutes % 60;
-
-
-  return (
-    hour +
-    ":" +
-    String(minute).padStart(2, "0")
   );
 
 }
 
 
 // ==================================================
-// 🚃 路線名
+// 🚃 乗り換え検索
 // ==================================================
 
-function getLineName(fileName) {
+function findTransferTrain(
+  startStation,
+  endStation
+) {
 
+  const startLine =
+    getStationLine(
+      startStation
+    );
+
+
+  const endLine =
+    getStationLine(
+      endStation
+    );
+
+
+  // 同じ路線なら乗換不要
   if (
-    fileName.includes("karasuma")
+    startLine === endLine
   ) {
 
-    return "烏丸線";
+    return null;
+
+  }
+
+
+  // ==============================================
+  // 乗換駅
+  // ==============================================
+
+  const transferStation =
+    "烏丸御池";
+
+
+  // ==============================================
+  // 乗換に必要な時間
+  // ==============================================
+  // ホーム移動などを考えて4分とする
+
+  const transferMinutes = 4;
+
+
+  // ==============================================
+  // 現在時刻
+  // ==============================================
+
+  const now =
+    getCurrentMinutes();
+
+
+  // ==============================================
+  // 最初の路線の候補を探す
+  // ==============================================
+
+  const firstFiles =
+    getLineFiles(
+      startLine
+    );
+
+
+  const secondFiles =
+    getLineFiles(
+      endLine
+    );
+
+
+  const candidates = [];
+
+
+  // ==============================================
+  // 1本目の電車を全部確認
+  // ==============================================
+
+  for (
+    const fileName of firstFiles
+  ) {
+
+    const rows =
+      trainData[fileName];
+
+
+    if (!rows) {
+      continue;
+    }
+
+
+    const headers =
+      rows[3] || [];
+
+
+    const startIndex =
+      headers.indexOf(
+        startStation
+      );
+
+
+    const transferIndex =
+      headers.indexOf(
+        transferStation
+      );
+
+
+    if (
+      startIndex === -1 ||
+      transferIndex === -1
+    ) {
+
+      continue;
+
+    }
+
+
+    // ==========================================
+    // 1本目の電車
+    // ==========================================
+
+    for (
+      let i = 4;
+      i < rows.length;
+      i++
+    ) {
+
+      const row =
+        rows[i];
+
+
+      if (!row) {
+        continue;
+      }
+
+
+      const startTime =
+        timeToMinutes(
+          row[startIndex]
+        );
+
+
+      const transferArrival =
+        timeToMinutes(
+          row[transferIndex]
+        );
+
+
+      if (
+        startTime === null ||
+        transferArrival === null
+      ) {
+
+        continue;
+
+      }
+
+
+      // 現在時刻より前の電車は除外
+      if (
+        startTime < now
+      ) {
+
+        continue;
+
+      }
+
+
+      // ========================================
+      // 乗換可能時刻
+      // ========================================
+
+      const secondStartAfter =
+        transferArrival +
+        transferMinutes;
+
+
+      // ========================================
+      // 2本目の電車を探す
+      // ========================================
+
+      for (
+        const secondFileName
+        of secondFiles
+      ) {
+
+        const secondRows =
+          trainData[
+            secondFileName
+          ];
+
+
+        if (!secondRows) {
+          continue;
+        }
+
+
+        const secondHeaders =
+          secondRows[3] || [];
+
+
+        const secondTransferIndex =
+          secondHeaders.indexOf(
+            transferStation
+          );
+
+
+        const endIndex =
+          secondHeaders.indexOf(
+            endStation
+          );
+
+
+        if (
+          secondTransferIndex === -1 ||
+          endIndex === -1
+        ) {
+
+          continue;
+
+        }
+
+
+        // ======================================
+        // 2本目の電車
+        // ======================================
+
+        for (
+          let j = 4;
+          j < secondRows.length;
+          j++
+        ) {
+
+          const secondRow =
+            secondRows[j];
+
+
+          if (!secondRow) {
+            continue;
+          }
+
+
+          const secondStart =
+            timeToMinutes(
+              secondRow[
+                secondTransferIndex
+              ]
+            );
+
+
+          const secondEnd =
+            timeToMinutes(
+              secondRow[
+                endIndex
+              ]
+            );
+
+
+          if (
+            secondStart === null ||
+            secondEnd === null
+          ) {
+
+            continue;
+
+          }
+
+
+          // 乗換に間に合わない電車
+          if (
+            secondStart <
+            secondStartAfter
+          ) {
+
+            continue;
+
+          }
+
+
+          let secondTravelTime =
+            secondEnd -
+            secondStart;
+
+
+          if (
+            secondTravelTime < 0
+          ) {
+
+            secondTravelTime +=
+              24 * 60;
+
+          }
+
+
+          // ====================================
+          // 全体の所要時間
+          // ====================================
+
+          let totalTime =
+            secondEnd -
+            startTime;
+
+
+          if (
+            totalTime < 0
+          ) {
+
+            totalTime +=
+              24 * 60;
+
+          }
+
+
+          candidates.push({
+
+            firstFile:
+              fileName,
+
+            secondFile:
+              secondFileName,
+
+            firstStart:
+              startTime,
+
+            transferArrival:
+              transferArrival,
+
+            secondStart:
+              secondStart,
+
+            finalArrival:
+              secondEnd,
+
+            totalTime:
+              totalTime,
+
+            firstTravelTime:
+              transferArrival -
+              startTime,
+
+            secondTravelTime:
+              secondTravelTime
+
+          });
+
+
+          // 一番早い2本目を見つけたら
+          // この電車については終了
+          break;
+
+        }
+
+      }
+
+    }
 
   }
 
 
   if (
-    fileName.includes("tozai")
+    candidates.length === 0
   ) {
 
-    return "東西線";
+    return null;
 
   }
 
 
-  return "地下鉄";
-
-}
-
-
-// ==================================================
-// 🚃 上り・下り
-// ==================================================
-
-function getDirectionName(fileName) {
-
-  if (
-    fileName.includes("Up")
-  ) {
-
-    return "上り";
-
-  }
+  // 最終到着時刻が早い順
+  candidates.sort(
+    (a, b) =>
+      a.totalTime -
+      b.totalTime
+  );
 
 
-  if (
-    fileName.includes("Down")
-  ) {
-
-    return "下り";
-
-  }
-
-
-  return "";
+  return candidates[0];
 
 }
 
@@ -1157,6 +1576,369 @@ function getDirectionName(fileName) {
 // ==================================================
 
 function searchTrain() {
+
+  const startStation =
+    document
+      .getElementById(
+        "train-start"
+      )
+      .value
+      .trim();
+
+
+  const endStation =
+    document
+      .getElementById(
+        "train-end"
+      )
+      .value
+      .trim();
+
+
+  const status =
+    document.getElementById(
+      "train-status"
+    );
+
+
+  if (
+    !startStation ||
+    !endStation
+  ) {
+
+    alert(
+      "出発駅と到着駅を入力してください！"
+    );
+
+    return;
+
+  }
+
+
+  if (
+    startStation === endStation
+  ) {
+
+    alert(
+      "出発駅と到着駅を別々に入力してください！"
+    );
+
+    return;
+
+  }
+
+
+  // ==============================================
+  // データ読み込み確認
+  // ==============================================
+
+  if (
+    Object.keys(trainData).length === 0
+  ) {
+
+    alert(
+      "電車データを読み込み中です。少し待ってからもう一度検索してください。"
+    );
+
+    return;
+
+  }
+
+
+  const startLine =
+    getStationLine(
+      startStation
+    );
+
+
+  const endLine =
+    getStationLine(
+      endStation
+    );
+
+
+  // ==============================================
+  // 駅名チェック
+  // ==============================================
+
+  if (!startLine) {
+
+    alert(
+      "出発駅「" +
+      startStation +
+      "」が見つかりません。\n" +
+      "CSVにある駅名と同じ表記で入力してください。"
+    );
+
+    return;
+
+  }
+
+
+  if (!endLine) {
+
+    alert(
+      "到着駅「" +
+      endStation +
+      "」が見つかりません。\n" +
+      "CSVにある駅名と同じ表記で入力してください。"
+    );
+
+    return;
+
+  }
+
+
+  // ==============================================
+  // 同じ路線
+  // ==============================================
+
+  if (
+    startLine === endLine
+  ) {
+
+    const result =
+      findDirectTrain(
+        startStation,
+        endStation
+      );
+
+
+    if (!result) {
+
+      document.getElementById(
+        "train-time"
+      ).textContent = "--";
+
+
+      status.innerHTML =
+        "⚠ 次の電車が見つかりませんでした。";
+
+
+      status.style.color =
+        "#d32f2f";
+
+
+      return;
+
+    }
+
+
+    document.getElementById(
+      "train-time"
+    ).textContent =
+      formatTime(
+        result.travelTime
+      );
+
+
+    document.getElementById(
+      "train-distance"
+    ).textContent =
+      "--";
+
+
+    document.getElementById(
+      "train-co2"
+    ).textContent =
+      "--";
+
+
+    const line =
+      getLineName(
+        result.fileName
+      );
+
+
+    const direction =
+      getDirectionName(
+        result.fileName
+      );
+
+
+    status.innerHTML =
+
+      "🚃 " +
+      startStation +
+      " → " +
+      endStation +
+
+      "<br>" +
+
+      "次の電車：" +
+
+      minutesToTime(
+        result.startTime
+      ) +
+
+      "発 → " +
+
+      minutesToTime(
+        result.endTime
+      ) +
+
+      "着" +
+
+      "<br>" +
+
+      "路線：" +
+      line +
+      " " +
+      direction;
+
+
+    status.style.color =
+      "#388e3c";
+
+
+    console.log(
+      "🚃 直通検索:",
+      result
+    );
+
+
+    return;
+
+  }
+
+
+  // ==============================================
+  // 🚃 乗り換え検索
+  // ==============================================
+
+  const transferResult =
+    findTransferTrain(
+      startStation,
+      endStation
+    );
+
+
+  if (!transferResult) {
+
+    document.getElementById(
+      "train-time"
+    ).textContent = "--";
+
+
+    status.innerHTML =
+      "⚠ 乗り換えルートが見つかりませんでした。";
+
+
+    status.style.color =
+      "#d32f2f";
+
+
+    return;
+
+  }
+
+
+  // ==============================================
+  // 所要時間
+  // ==============================================
+
+  document.getElementById(
+    "train-time"
+  ).textContent =
+    formatTime(
+      transferResult.totalTime
+    );
+
+
+  document.getElementById(
+    "train-distance"
+  ).textContent =
+    "--";
+
+
+  document.getElementById(
+    "train-co2"
+  ).textContent =
+    "--";
+
+
+  // ==============================================
+  // 路線名
+  // ==============================================
+
+  const firstLine =
+    getLineName(
+      transferResult.firstFile
+    );
+
+
+  const secondLine =
+    getLineName(
+      transferResult.secondFile
+    );
+
+
+  // ==============================================
+  // 結果表示
+  // ==============================================
+
+  status.innerHTML =
+
+    "🚃 " +
+    startStation +
+    " → " +
+    endStation +
+
+    "<br><br>" +
+
+    "① " +
+    firstLine +
+    "<br>" +
+
+    startStation +
+    " " +
+    minutesToTime(
+      transferResult.firstStart
+    ) +
+    "発" +
+
+    " → 烏丸御池 " +
+
+    minutesToTime(
+      transferResult.transferArrival
+    ) +
+    "着" +
+
+    "<br><br>" +
+
+    "🔄 烏丸御池で乗り換え" +
+
+    "<br>" +
+
+    "② " +
+    secondLine +
+    "<br>" +
+
+    "烏丸御池 " +
+    minutesToTime(
+      transferResult.secondStart
+    ) +
+    "発" +
+
+    " → " +
+    endStation +
+    " " +
+    minutesToTime(
+      transferResult.finalArrival
+    ) +
+    "着";
+
+
+  status.style.color =
+    "#388e3c";
+
+
+  console.log(
+    "🚃 乗換検索結果:",
+    transferResult
+  );
+
+}
 
   const startStation =
     document
