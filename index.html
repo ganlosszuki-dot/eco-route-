@@ -637,7 +637,28 @@
   // ページを開いたら電車CSVを読み込む
   // ========================================
 
-  loadAllTrainData();
+  loadAllTrainData().then(() => {
+  checkTrainData();
+});
+  // ========================================
+// 🚃 電車CSVの中身を確認
+// ========================================
+
+function checkTrainData() {
+
+  console.log("===== 電車CSV確認 =====");
+
+  for (const [name, data] of Object.entries(trainData)) {
+
+    console.log("ファイル:", name);
+    console.log("行数:", data.length);
+    console.log("1行目:", data[0]);
+    console.log("2行目:", data[1]);
+
+  }
+
+  console.log("======================");
+}
 
 
   // ========================================
