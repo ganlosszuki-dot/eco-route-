@@ -114,6 +114,13 @@
       margin-top: 4px;
     }
 
+    /* 電車データ読み込み状況 */
+    .train-status {
+      margin-top: 10px;
+      font-size: 13px;
+      color: #666;
+    }
+
     /* 注記 */
     .note {
       margin: 10px 20px 30px;
@@ -133,123 +140,213 @@
   🌱 Eco Route
 </header>
 
+
 <div class="search-box">
-  <input id="start" type="text" placeholder="出発地">
-  <input id="end" type="text" placeholder="目的地">
-  <button onclick="searchRoute()">ルート検索</button>
+
+  <input
+    id="start"
+    type="text"
+    placeholder="出発地"
+  >
+
+  <input
+    id="end"
+    type="text"
+    placeholder="目的地"
+  >
+
+  <button onclick="searchRoute()">
+    ルート検索
+  </button>
+
 </div>
 
+
 <div id="map"></div>
+
 
 <div class="cards">
 
   <!-- 徒歩 -->
   <div class="card best">
+
     <div class="icon">🚶</div>
+
     <h3>徒歩</h3>
 
     <div class="info">
       距離
-      <div class="big-number" id="walk-distance">--</div>
+      <div
+        class="big-number"
+        id="walk-distance"
+      >
+        --
+      </div>
     </div>
 
     <div class="info">
       時間
-      <div class="big-number" id="walk-time">--</div>
+      <div
+        class="big-number"
+        id="walk-time"
+      >
+        --
+      </div>
     </div>
 
     <div class="co2">
       🌱 CO₂
-      <div class="co2-number">0 g</div>
+      <div class="co2-number">
+        0 g
+      </div>
     </div>
+
   </div>
 
 
   <!-- 自転車 -->
   <div class="card">
+
     <div class="icon">🚲</div>
+
     <h3>自転車</h3>
 
     <div class="info">
       距離
-      <div class="big-number" id="bike-distance">--</div>
+      <div
+        class="big-number"
+        id="bike-distance"
+      >
+        --
+      </div>
     </div>
 
     <div class="info">
       時間
-      <div class="big-number" id="bike-time">--</div>
+      <div
+        class="big-number"
+        id="bike-time"
+      >
+        --
+      </div>
     </div>
 
     <div class="co2">
       🌱 CO₂
-      <div class="co2-number">0 g</div>
+      <div class="co2-number">
+        0 g
+      </div>
     </div>
+
   </div>
 
 
   <!-- 車 -->
   <div class="card">
+
     <div class="icon">🚗</div>
+
     <h3>車</h3>
 
     <div class="info">
       距離
-      <div class="big-number" id="car-distance">--</div>
+      <div
+        class="big-number"
+        id="car-distance"
+      >
+        --
+      </div>
     </div>
 
     <div class="info">
       時間
-      <div class="big-number" id="car-time">--</div>
+      <div
+        class="big-number"
+        id="car-time"
+      >
+        --
+      </div>
     </div>
 
     <div class="co2">
       🌱 CO₂
-      <div class="co2-number" id="car-co2">--</div>
+      <div
+        class="co2-number"
+        id="car-co2"
+      >
+        --
+      </div>
     </div>
+
   </div>
 
 
   <!-- 電車 -->
   <div class="card">
+
     <div class="icon">🚃</div>
+
     <h3>電車</h3>
 
     <div class="info">
       距離
-      <div class="big-number">--</div>
+      <div class="big-number">
+        --
+      </div>
     </div>
 
     <div class="info">
       時間
-      <div class="big-number">--</div>
+      <div class="big-number">
+        --
+      </div>
     </div>
 
     <div class="co2">
       🌱 CO₂
-      <div class="co2-number">--</div>
+      <div class="co2-number">
+        --
+      </div>
     </div>
+
+    <div
+      class="train-status"
+      id="train-status"
+    >
+      電車データを読み込み中...
+    </div>
+
   </div>
 
 
   <!-- バス -->
   <div class="card">
+
     <div class="icon">🚌</div>
+
     <h3>バス</h3>
 
     <div class="info">
       距離
-      <div class="big-number">--</div>
+      <div class="big-number">
+        --
+      </div>
     </div>
 
     <div class="info">
       時間
-      <div class="big-number">--</div>
+      <div class="big-number">
+        --
+      </div>
     </div>
 
     <div class="co2">
       🌱 CO₂
-      <div class="co2-number">--</div>
+      <div class="co2-number">
+        --
+      </div>
     </div>
+
   </div>
 
 </div>
@@ -257,23 +354,38 @@
 
 <!-- 注記 -->
 <div class="note">
+
   <strong>注記</strong><br>
-  車の所要時間は、時速50kmで走行すると仮定して計算しています。<br>
+
+  車の所要時間は、
+  時速50kmで走行すると仮定して計算しています。<br>
+
   実際の所要時間は道路状況や交通状況などによって異なります。
+
 </div>
 
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+
 <script>
 
+  // ========================================
   // 地図
-  const map = L.map('map').setView([35.0116, 135.7681], 13);
+  // ========================================
+
+  const map =
+    L.map('map').setView(
+      [35.0116, 135.7681],
+      13
+    );
+
 
   L.tileLayer(
     'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
-      attribution: '&copy; OpenStreetMap contributors'
+      attribution:
+        '&copy; OpenStreetMap contributors'
     }
   ).addTo(map);
 
@@ -281,215 +393,616 @@
   let routeLines = [];
 
 
+  // ========================================
+  // 🚃 電車のCSVファイル
+  // ========================================
+
+  const trainFiles = {
+
+    karasumaWeekdayUp:
+      "karasuma-weekday-up.csv",
+
+    karasumaWeekdayDown:
+      "karasuma-weekday-down.csv",
+
+    karasumaHolidayUp:
+      "karasuma-holiday-up.csv",
+
+    karasumaHolidayDown:
+      "karasuma-holiday-down.csv",
+
+    tozaiWeekdayUp:
+      "tozai-weekday-up.csv",
+
+    tozaiWeekdayDown:
+      "tozai-weekday-down.csv",
+
+    tozaiHolidayUp:
+      "tozai-holiday-up.csv",
+
+    tozaiHolidayDown:
+      "tozai-holiday-down.csv"
+
+  };
+
+
+  // ========================================
+  // CSVを読み込む
+  // ========================================
+
+  async function loadCSV(filename) {
+
+    const response =
+      await fetch(filename);
+
+    if (!response.ok) {
+
+      throw new Error(
+        filename +
+        " を読み込めませんでした"
+      );
+
+    }
+
+    const text =
+      await response.text();
+
+    return parseCSV(text);
+  }
+
+
+  // ========================================
+  // CSVを表として読み込む
+  // ========================================
+
+  function parseCSV(text) {
+
+    // BOMを削除
+    text =
+      text.replace(/^\uFEFF/, "");
+
+    const rows = [];
+
+    let row = [];
+    let cell = "";
+    let insideQuotes = false;
+
+
+    for (let i = 0; i < text.length; i++) {
+
+      const char = text[i];
+      const next = text[i + 1];
+
+
+      // " の処理
+      if (char === '"') {
+
+        if (
+          insideQuotes &&
+          next === '"'
+        ) {
+
+          cell += '"';
+          i++;
+
+        } else {
+
+          insideQuotes =
+            !insideQuotes;
+
+        }
+
+        continue;
+      }
+
+
+      // カンマ
+      if (
+        char === "," &&
+        !insideQuotes
+      ) {
+
+        row.push(cell);
+        cell = "";
+
+        continue;
+      }
+
+
+      // 改行
+      if (
+        (char === "\n" || char === "\r") &&
+        !insideQuotes
+      ) {
+
+        if (
+          char === "\r" &&
+          next === "\n"
+        ) {
+          i++;
+        }
+
+        row.push(cell);
+
+        rows.push(row);
+
+        row = [];
+        cell = "";
+
+        continue;
+      }
+
+
+      cell += char;
+    }
+
+
+    // 最後のセル
+    if (
+      cell !== "" ||
+      row.length > 0
+    ) {
+
+      row.push(cell);
+      rows.push(row);
+
+    }
+
+
+    return rows;
+  }
+
+
+  // ========================================
+  // 🚃 8個のCSVをまとめて読み込む
+  // ========================================
+
+  let trainData = {};
+
+
+  async function loadAllTrainData() {
+
+    const status =
+      document.getElementById(
+        "train-status"
+      );
+
+
+    try {
+
+      const fileNames =
+        Object.entries(trainFiles);
+
+
+      for (
+        const [name, filename]
+        of fileNames
+      ) {
+
+        console.log(
+          "読み込み中:",
+          filename
+        );
+
+
+        trainData[name] =
+          await loadCSV(filename);
+
+
+        console.log(
+          "読み込み完了:",
+          filename,
+          trainData[name]
+        );
+
+      }
+
+
+      // 成功
+      status.textContent =
+        "✓ 電車データ8件を読み込みました";
+
+
+      status.style.color =
+        "#388e3c";
+
+
+      console.log(
+        "🚃 全電車データ:",
+        trainData
+      );
+
+
+    } catch (error) {
+
+      console.error(
+        "電車データ読み込みエラー:",
+        error
+      );
+
+
+      status.textContent =
+        "⚠ 電車データの読み込みに失敗しました";
+
+
+      status.style.color =
+        "#d32f2f";
+
+    }
+
+  }
+
+
+  // ========================================
+  // ページを開いたら電車CSVを読み込む
+  // ========================================
+
+  loadAllTrainData();
+
+
+  // ========================================
   // 住所 → 緯度経度
+  // ========================================
+
   async function geocode(place) {
 
     const url =
       `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(place)}`;
 
-    const response = await fetch(url);
-    const data = await response.json();
 
-    if (data.length === 0) {
-      throw new Error(place + " が見つかりませんでした");
+    const response =
+      await fetch(url);
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      data.length === 0
+    ) {
+
+      throw new Error(
+        place +
+        " が見つかりませんでした"
+      );
+
     }
+
 
     return {
-      lat: parseFloat(data[0].lat),
-      lon: parseFloat(data[0].lon)
+
+      lat:
+        parseFloat(data[0].lat),
+
+      lon:
+        parseFloat(data[0].lon)
+
     };
+
   }
 
 
+  // ========================================
   // 距離を表示
+  // ========================================
+
   function formatDistance(meters) {
 
-    if (meters < 1000) {
-      return Math.round(meters) + " m";
+    if (
+      meters < 1000
+    ) {
+
+      return (
+        Math.round(meters) +
+        " m"
+      );
+
     }
 
-    return (meters / 1000).toFixed(1) + " km";
+
+    return (
+      (meters / 1000).toFixed(1) +
+      " km"
+    );
+
   }
 
 
+  // ========================================
   // 時間を表示
+  // ========================================
+
   function formatTime(minutes) {
 
-    minutes = Math.round(minutes);
+    minutes =
+      Math.round(minutes);
 
-    if (minutes < 60) {
-      return minutes + "分";
+
+    if (
+      minutes < 60
+    ) {
+
+      return (
+        minutes +
+        "分"
+      );
+
     }
 
-    const hours = Math.floor(minutes / 60);
-    const mins = minutes % 60;
 
-    return hours + "時間" + mins + "分";
+    const hours =
+      Math.floor(
+        minutes / 60
+      );
+
+
+    const mins =
+      minutes % 60;
+
+
+    return (
+      hours +
+      "時間" +
+      mins +
+      "分"
+    );
+
   }
 
 
+  // ========================================
   // OSRMでルート取得
-  async function getRoute(start, end, profile) {
+  // ========================================
+
+  async function getRoute(
+    start,
+    end,
+    profile
+  ) {
 
     const url =
       `https://router.project-osrm.org/route/v1/${profile}/` +
       `${start.lon},${start.lat};${end.lon},${end.lat}` +
       `?overview=full&geometries=geojson`;
 
-    const response = await fetch(url);
-    const data = await response.json();
 
-    if (data.code !== "Ok") {
-      throw new Error("ルートを取得できませんでした");
+    const response =
+      await fetch(url);
+
+
+    const data =
+      await response.json();
+
+
+    if (
+      data.code !== "Ok"
+    ) {
+
+      throw new Error(
+        "ルートを取得できませんでした"
+      );
+
     }
 
+
     return data.routes[0];
+
   }
 
 
+  // ========================================
   // ルート検索
+  // ========================================
+
   async function searchRoute() {
 
     const startText =
-      document.getElementById("start").value;
+      document.getElementById(
+        "start"
+      ).value;
+
 
     const endText =
-      document.getElementById("end").value;
+      document.getElementById(
+        "end"
+      ).value;
 
 
-    if (!startText || !endText) {
-      alert("出発地と目的地を入力してください！");
+    if (
+      !startText ||
+      !endText
+    ) {
+
+      alert(
+        "出発地と目的地を入力してください！"
+      );
+
       return;
+
     }
 
 
     try {
 
       // 地名を緯度経度に変換
-      const start = await geocode(startText);
-      const end = await geocode(endText);
+      const start =
+        await geocode(startText);
+
+
+      const end =
+        await geocode(endText);
 
 
       // 地図を移動
       map.setView(
-        [start.lat, start.lon],
+        [
+          start.lat,
+          start.lon
+        ],
         13
       );
 
 
       // 前のルートを削除
-      routeLines.forEach(line => {
-        map.removeLayer(line);
-      });
+      routeLines.forEach(
+        line => {
+          map.removeLayer(line);
+        }
+      );
+
 
       routeLines = [];
 
 
       // 出発地点
-      L.marker([start.lat, start.lon])
-        .addTo(map)
-        .bindPopup("出発地")
-        .openPopup();
+      L.marker(
+        [
+          start.lat,
+          start.lon
+        ]
+      )
+      .addTo(map)
+      .bindPopup("出発地")
+      .openPopup();
 
 
       // 目的地点
-      L.marker([end.lat, end.lon])
-        .addTo(map)
-        .bindPopup("目的地");
+      L.marker(
+        [
+          end.lat,
+          end.lon
+        ]
+      )
+      .addTo(map)
+      .bindPopup("目的地");
 
 
       // 徒歩
       const walk =
-        await getRoute(start, end, "walking");
+        await getRoute(
+          start,
+          end,
+          "walking"
+        );
 
 
       // 自転車
       const bike =
-        await getRoute(start, end, "cycling");
+        await getRoute(
+          start,
+          end,
+          "cycling"
+        );
 
 
       // 車
       const car =
-        await getRoute(start, end, "driving");
+        await getRoute(
+          start,
+          end,
+          "driving"
+        );
 
 
       // 徒歩ルートを表示
       const walkLine =
-        L.geoJSON(walk.geometry)
-          .addTo(map);
+        L.geoJSON(
+          walk.geometry
+        ).addTo(map);
 
-      routeLines.push(walkLine);
+
+      routeLines.push(
+        walkLine
+      );
 
 
       // 距離
-      document.getElementById("walk-distance")
-        .textContent =
-        formatDistance(walk.distance);
-
-      document.getElementById("bike-distance")
-        .textContent =
-        formatDistance(bike.distance);
-
-      document.getElementById("car-distance")
-        .textContent =
-        formatDistance(car.distance);
+      document.getElementById(
+        "walk-distance"
+      ).textContent =
+        formatDistance(
+          walk.distance
+        );
 
 
-      // =========================
-      // 徒歩の時間
-      // 時速4.5km
-      // =========================
+      document.getElementById(
+        "bike-distance"
+      ).textContent =
+        formatDistance(
+          bike.distance
+        );
 
+
+      document.getElementById(
+        "car-distance"
+      ).textContent =
+        formatDistance(
+          car.distance
+        );
+
+
+      // 徒歩
       const walkTime =
-        (walk.distance / 1000) / 4.5 * 60;
-
-      document.getElementById("walk-time")
-        .textContent =
-        formatTime(walkTime);
+        (walk.distance / 1000)
+        / 4.5 * 60;
 
 
-      // =========================
-      // 自転車の時間
-      // 時速15km
-      // =========================
+      document.getElementById(
+        "walk-time"
+      ).textContent =
+        formatTime(
+          walkTime
+        );
 
+
+      // 自転車
       const bikeTime =
-        (bike.distance / 1000) / 15 * 60;
-
-      document.getElementById("bike-time")
-        .textContent =
-        formatTime(bikeTime);
+        (bike.distance / 1000)
+        / 15 * 60;
 
 
-      // =========================
-      // 🚗 車の時間
-      // 時速50kmで計算
-      // =========================
+      document.getElementById(
+        "bike-time"
+      ).textContent =
+        formatTime(
+          bikeTime
+        );
 
+
+      // 車
+      // 時速50km
       const carTime =
-        (car.distance / 1000) / 50 * 60;
-
-      document.getElementById("car-time")
-        .textContent =
-        formatTime(carTime);
+        (car.distance / 1000)
+        / 50 * 60;
 
 
-      // =========================
+      document.getElementById(
+        "car-time"
+      ).textContent =
+        formatTime(
+          carTime
+        );
+
+
       // 車のCO₂
       // 1kmあたり130g
-      // =========================
-
       const carCO2 =
-        (car.distance / 1000) * 130;
+        (car.distance / 1000)
+        * 130;
 
-      document.getElementById("car-co2")
-        .textContent =
-        Math.round(carCO2) + " g";
+
+      document.getElementById(
+        "car-co2"
+      ).textContent =
+        Math.round(carCO2) +
+        " g";
 
 
     } catch (error) {
 
       console.error(error);
+
 
       alert(
         "ルート検索でエラーが発生しました。\n" +
