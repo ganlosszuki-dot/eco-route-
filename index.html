@@ -12,159 +12,236 @@
 
   <title>🌱 Eco Route</title>
 
-  <!-- Leaflet -->
+
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   >
 
+
   <style>
 
     body {
+
       margin: 0;
+
       font-family: sans-serif;
+
       background: #f5fff5;
+
       color: #333;
+
     }
+
 
     header {
+
       background: #4caf50;
+
       color: white;
+
       text-align: center;
+
       padding: 18px;
+
       font-size: 28px;
+
       font-weight: bold;
+
     }
+
 
     .search-box {
+
       padding: 15px;
+
       background: white;
+
       display: flex;
+
       gap: 10px;
+
       flex-wrap: wrap;
+
       justify-content: center;
+
     }
+
 
     input {
+
       padding: 12px;
+
       font-size: 16px;
+
       width: 250px;
+
       border: 1px solid #ccc;
+
       border-radius: 8px;
-      box-sizing: border-box;
+
     }
+
 
     button {
+
       padding: 12px 20px;
+
       font-size: 16px;
+
       border: none;
+
       border-radius: 8px;
+
       background: #4caf50;
+
       color: white;
+
       cursor: pointer;
+
     }
+
 
     button:hover {
+
       background: #388e3c;
+
     }
+
 
     #map {
+
       height: 450px;
+
       width: 100%;
+
     }
 
-    .train-search {
-      margin: 15px;
-      padding: 20px;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
-    }
-
-    .train-search h2 {
-      margin-top: 0;
-    }
-
-    .train-inputs {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .train-result {
-      margin-top: 15px;
-      padding: 15px;
-      background: #f1fff1;
-      border-radius: 10px;
-      line-height: 1.8;
-    }
 
     .cards {
+
       display: grid;
+
       grid-template-columns:
-        repeat(auto-fit, minmax(180px, 1fr));
+        repeat(
+          auto-fit,
+          minmax(180px, 1fr)
+        );
+
       gap: 15px;
+
       padding: 20px;
+
     }
+
 
     .card {
+
       background: white;
+
       border-radius: 15px;
+
       padding: 20px;
+
       text-align: center;
-      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+
+      box-shadow:
+        0 3px 10px
+        rgba(0,0,0,0.1);
+
     }
+
 
     .card.best {
+
       border: 3px solid #4caf50;
+
     }
+
 
     .icon {
+
       font-size: 40px;
+
     }
+
 
     h3 {
+
       margin: 10px 0;
+
       font-size: 22px;
+
     }
+
 
     .info {
+
       margin: 10px 0;
+
       color: #555;
+
     }
+
 
     .big-number {
+
       font-size: 22px;
+
       font-weight: bold;
+
       margin-top: 4px;
+
     }
+
 
     .co2 {
+
       margin-top: 15px;
+
       color: #388e3c;
+
       font-weight: bold;
+
     }
+
 
     .co2-number {
+
       font-size: 20px;
+
       margin-top: 4px;
+
     }
+
 
     .train-status {
+
       margin-top: 10px;
+
       font-size: 13px;
+
       color: #666;
+
     }
 
+
     .note {
+
       margin: 10px 20px 30px;
+
       padding: 15px;
+
       background: #f0f0f0;
+
       border-radius: 10px;
+
       font-size: 14px;
+
       color: #555;
+
       line-height: 1.7;
+
     }
 
   </style>
@@ -176,15 +253,15 @@
 
 
 <header>
+
   🌱 Eco Route
+
 </header>
 
 
-<!-- ================================= -->
-<!-- 住所検索 -->
-<!-- ================================= -->
 
 <div class="search-box">
+
 
   <input
     id="start"
@@ -192,359 +269,518 @@
     placeholder="出発地"
   >
 
+
   <input
     id="end"
     type="text"
     placeholder="目的地"
   >
 
+
   <button onclick="searchRoute()">
+
     ルート検索
+
   </button>
+
 
 </div>
 
 
-<!-- ================================= -->
-<!-- 地図 -->
-<!-- ================================= -->
 
 <div id="map"></div>
 
 
-<!-- ================================= -->
-<!-- 電車検索 -->
-<!-- ================================= -->
-
-<div class="train-search">
-
-  <h2>🚃 電車ルート検索</h2>
-
-  <div class="train-inputs">
-
-    <input
-      id="train-start"
-      type="text"
-      placeholder="出発駅（例：竹田）"
-    >
-
-    <input
-      id="train-end"
-      type="text"
-      placeholder="到着駅（例：京都）"
-    >
-
-    <button onclick="searchTrain()">
-      🚃 電車検索
-    </button>
-
-  </div>
-
-
-  <div
-    class="train-result"
-    id="train-result"
-  >
-    駅を入力して「電車検索」を押してください。
-  </div>
-
-</div>
-
-
-<!-- ================================= -->
-<!-- 交通手段カード -->
-<!-- ================================= -->
 
 <div class="cards">
 
 
+  <!-- ========================= -->
   <!-- 徒歩 -->
+  <!-- ========================= -->
 
   <div class="card best">
 
-    <div class="icon">🚶</div>
 
-    <h3>徒歩</h3>
+    <div class="icon">
+
+      🚶
+
+    </div>
+
+
+    <h3>
+
+      徒歩
+
+    </h3>
+
 
     <div class="info">
+
       距離
 
       <div
         class="big-number"
         id="walk-distance"
       >
+
         --
+
       </div>
+
     </div>
 
+
     <div class="info">
+
       時間
 
       <div
         class="big-number"
         id="walk-time"
       >
+
         --
+
       </div>
+
     </div>
 
+
     <div class="co2">
+
       🌱 CO₂
 
       <div class="co2-number">
+
         0 g
+
       </div>
+
     </div>
+
 
   </div>
 
 
+
+  <!-- ========================= -->
   <!-- 自転車 -->
+  <!-- ========================= -->
 
   <div class="card">
 
-    <div class="icon">🚲</div>
 
-    <h3>自転車</h3>
+    <div class="icon">
+
+      🚲
+
+    </div>
+
+
+    <h3>
+
+      自転車
+
+    </h3>
+
 
     <div class="info">
+
       距離
 
       <div
         class="big-number"
         id="bike-distance"
       >
+
         --
+
       </div>
+
     </div>
 
+
     <div class="info">
+
       時間
 
       <div
         class="big-number"
         id="bike-time"
       >
+
         --
+
       </div>
+
     </div>
 
+
     <div class="co2">
+
       🌱 CO₂
 
       <div class="co2-number">
+
         0 g
+
       </div>
+
     </div>
+
 
   </div>
 
 
+
+  <!-- ========================= -->
   <!-- 車 -->
+  <!-- ========================= -->
 
   <div class="card">
 
-    <div class="icon">🚗</div>
 
-    <h3>車</h3>
+    <div class="icon">
+
+      🚗
+
+    </div>
+
+
+    <h3>
+
+      車
+
+    </h3>
+
 
     <div class="info">
+
       距離
 
       <div
         class="big-number"
         id="car-distance"
       >
+
         --
+
       </div>
+
     </div>
 
+
     <div class="info">
+
       時間
 
       <div
         class="big-number"
         id="car-time"
       >
+
         --
+
       </div>
+
     </div>
 
+
     <div class="co2">
+
       🌱 CO₂
 
       <div
         class="co2-number"
         id="car-co2"
       >
+
         --
+
       </div>
+
     </div>
+
 
   </div>
 
 
+
+  <!-- ========================= -->
   <!-- 電車 -->
-<div class="card">
-
-  <div class="icon">🚃</div>
-
-  <h3>電車</h3>
-
-  <div class="info">
-    距離
-    <div
-      class="big-number"
-      id="train-distance"
-    >
-      --
-    </div>
-  </div>
-
-  <div class="info">
-    時間
-    <div
-      class="big-number"
-      id="train-time"
-    >
-      --
-    </div>
-  </div>
-
-  <div class="co2">
-    🌱 CO₂
-    <div
-      class="co2-number"
-      id="train-co2"
-    >
-      --
-    </div>
-  </div>
-
-  <div
-    class="train-status"
-    id="train-status"
-  >
-    電車データを読み込み中...
-  </div>
-
-</div>
-
-
-  <!-- バス -->
+  <!-- ========================= -->
 
   <div class="card">
 
-    <div class="icon">🚌</div>
 
-    <h3>バス</h3>
+    <div class="icon">
 
-    <div class="info">
-      距離
+      🚃
 
-      <div class="big-number">
-        --
-      </div>
     </div>
 
+
+    <h3>
+
+      電車
+
+    </h3>
+
+
     <div class="info">
+
+      区間
+
+      <div
+        class="big-number"
+        id="train-line"
+      >
+
+        --
+
+      </div>
+
+    </div>
+
+
+    <div class="info">
+
       時間
 
-      <div class="big-number">
+      <div
+        class="big-number"
+        id="train-time"
+      >
+
         --
+
       </div>
+
     </div>
+
+
+    <div class="info">
+
+      距離
+
+      <div
+        class="big-number"
+        id="train-distance"
+      >
+
+        --
+
+      </div>
+
+    </div>
+
 
     <div class="co2">
+
       🌱 CO₂
 
-      <div class="co2-number">
+      <div
+        class="co2-number"
+        id="train-co2"
+      >
+
         --
+
       </div>
+
     </div>
+
+
+    <div
+      class="train-status"
+      id="train-status"
+    >
+
+      電車データを読み込み中...
+
+    </div>
+
 
   </div>
 
+
+
+  <!-- ========================= -->
+  <!-- バス -->
+  <!-- ========================= -->
+
+  <div class="card">
+
+
+    <div class="icon">
+
+      🚌
+
+    </div>
+
+
+    <h3>
+
+      バス
+
+    </h3>
+
+
+    <div class="info">
+
+      距離
+
+      <div class="big-number">
+
+        --
+
+      </div>
+
+    </div>
+
+
+    <div class="info">
+
+      時間
+
+      <div class="big-number">
+
+        --
+
+      </div>
+
+    </div>
+
+
+    <div class="co2">
+
+      🌱 CO₂
+
+      <div class="co2-number">
+
+        --
+
+      </div>
+
+    </div>
+
+
+  </div>
+
+
 </div>
 
 
-<!-- ================================= -->
-<!-- 注記 -->
-<!-- ================================= -->
 
 <div class="note">
 
-  <strong>注記</strong><br>
+  <strong>注記</strong>
+
+  <br>
 
   車の所要時間は、
-  時速50kmで走行すると仮定して計算しています。<br>
+  時速50kmで走行すると仮定しています。
 
-  実際の所要時間は道路状況や交通状況などによって異なります。<br>
+  <br>
 
-  電車は京都市営地下鉄の2026年3月14日改正時刻表データを使用しています。
+  車のCO₂排出量は
+  130g/kmとして計算しています。
+
+  <br>
+
+  電車のCO₂排出量は
+  20g/人kmとして計算しています。
+
+  <br>
+
+  電車の距離は、地下鉄の駅間距離を
+  基準に計算します。
 
 </div>
 
 
-<!-- Leaflet -->
 
 <script
   src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
 </script>
 
 
+
 <script>
 
 
-/* =========================================
-   🗺️ 地図
-========================================= */
+// ========================================
+// 🗺️ 地図
+// ========================================
+
 
 const map =
+
   L.map("map").setView(
+
     [35.0116, 135.7681],
+
     13
+
   );
 
 
 L.tileLayer(
+
   "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+
   {
+
     attribution:
       "&copy; OpenStreetMap contributors"
+
   }
+
 ).addTo(map);
+
 
 
 let routeLines = [];
 
 
-/* =========================================
-   🚃 電車CSV
-========================================= */
+
+// ========================================
+// 🚃 電車CSV
+// ========================================
+
 
 const trainFiles = {
+
 
   karasumaWeekdayUp:
     "karasuma-weekday-up.csv",
 
+
   karasumaWeekdayDown:
     "karasuma-weekday-down.csv",
+
 
   karasumaHolidayUp:
     "karasuma-holiday-up.csv",
 
+
   karasumaHolidayDown:
     "karasuma-holiday-down.csv",
+
 
   tozaiWeekdayUp:
     "tozai-weekday-up.csv",
 
+
   tozaiWeekdayDown:
     "tozai-weekday-down.csv",
 
+
   tozaiHolidayUp:
     "tozai-holiday-up.csv",
+
 
   tozaiHolidayDown:
     "tozai-holiday-down.csv"
@@ -552,48 +788,213 @@ const trainFiles = {
 };
 
 
+
 let trainData = {};
 
 
-/* =========================================
-   CSV読み込み
-========================================= */
+
+// ========================================
+// 🚇 駅一覧
+// ========================================
+
+
+const karasumaStations = [
+
+  "国際会館",
+
+  "松ヶ崎",
+
+  "北山",
+
+  "北大路",
+
+  "鞍馬口",
+
+  "今出川",
+
+  "丸太町",
+
+  "烏丸御池",
+
+  "四条",
+
+  "五条",
+
+  "京都",
+
+  "九条",
+
+  "十条",
+
+  "くいな橋",
+
+  "竹田"
+
+];
+
+
+const tozaiStations = [
+
+  "六地蔵",
+
+  "石田",
+
+  "醍醐",
+
+  "小野",
+
+  "椥辻",
+
+  "東野",
+
+  "山科",
+
+  "御陵",
+
+  "蹴上",
+
+  "東山",
+
+  "三条京阪",
+
+  "京都市役所前",
+
+  "烏丸御池",
+
+  "二条城前",
+
+  "二条",
+
+  "西大路御池",
+
+  "太秦天神川"
+
+];
+
+
+
+// ========================================
+// 🚇 駅間距離
+//
+// 京都市の公開データを基準にした
+// 地下鉄区間距離
+//
+// 単位 km
+// ========================================
+
+
+// 烏丸線
+
+const karasumaDistances = [
+
+  1.0,
+  1.1,
+  1.2,
+  1.0,
+  0.9,
+  1.2,
+  1.0,
+  0.9,
+  1.0,
+  1.0,
+  0.9,
+  1.0,
+  1.0,
+  1.0
+
+];
+
+
+// 東西線
+
+const tozaiDistances = [
+
+  1.1,
+  1.2,
+  1.3,
+  1.3,
+  1.2,
+  1.0,
+  1.1,
+  1.3,
+  1.0,
+  1.0,
+  1.1,
+  1.1,
+  1.0,
+  1.0,
+  1.1,
+  1.5
+
+];
+
+
+
+// ========================================
+// 🚃 CO₂係数
+// ========================================
+
+
+const TRAIN_CO2_PER_KM = 20;
+
+
+
+// ========================================
+// CSV読み込み
+// ========================================
+
 
 async function loadCSV(filename) {
 
+
   const response =
+
     await fetch(filename);
+
 
   if (!response.ok) {
 
     throw new Error(
+
       filename +
       " を読み込めませんでした"
+
     );
 
   }
 
+
   const text =
+
     await response.text();
+
 
   return parseCSV(text);
 
 }
 
 
-/* =========================================
-   CSV解析
-========================================= */
+
+// ========================================
+// CSV解析
+// ========================================
+
 
 function parseCSV(text) {
 
+
   text =
+
     text.replace(/^\uFEFF/, "");
+
 
   const rows = [];
 
+
   let row = [];
+
   let cell = "";
+
   let insideQuotes = false;
 
 
@@ -603,18 +1004,24 @@ function parseCSV(text) {
     i++
   ) {
 
+
     const char = text[i];
+
     const next = text[i + 1];
 
 
     if (char === '"') {
 
+
       if (
+
         insideQuotes &&
         next === '"'
+
       ) {
 
         cell += '"';
+
         i++;
 
       } else {
@@ -624,43 +1031,59 @@ function parseCSV(text) {
 
       }
 
+
       continue;
+
     }
 
 
     if (
+
       char === "," &&
       !insideQuotes
+
     ) {
 
       row.push(cell);
+
       cell = "";
 
       continue;
+
     }
 
 
     if (
+
       (char === "\n" ||
        char === "\r") &&
       !insideQuotes
+
     ) {
 
+
       if (
+
         char === "\r" &&
         next === "\n"
+
       ) {
+
         i++;
+
       }
+
 
       row.push(cell);
 
       rows.push(row);
 
       row = [];
+
       cell = "";
 
       continue;
+
     }
 
 
@@ -670,11 +1093,14 @@ function parseCSV(text) {
 
 
   if (
+
     cell !== "" ||
     row.length > 0
+
   ) {
 
     row.push(cell);
+
     rows.push(row);
 
   }
@@ -685,13 +1111,17 @@ function parseCSV(text) {
 }
 
 
-/* =========================================
-   🚃 全CSV読み込み
-========================================= */
+
+// ========================================
+// 🚃 全CSV読み込み
+// ========================================
+
 
 async function loadAllTrainData() {
 
+
   const status =
+
     document.getElementById(
       "train-status"
     );
@@ -699,49 +1129,62 @@ async function loadAllTrainData() {
 
   try {
 
-    for (
-      const [name, filename]
-      of Object.entries(trainFiles)
-    ) {
 
-      console.log(
-        "読み込み中:",
-        filename
-      );
+    for (
+
+      const [name, filename]
+
+      of Object.entries(trainFiles)
+
+    ) {
 
 
       trainData[name] =
+
         await loadCSV(filename);
 
 
       console.log(
+
         "読み込み完了:",
+
         filename,
+
         trainData[name]
+
       );
 
     }
 
 
     status.textContent =
+
       "✓ 電車データ8件を読み込みました";
+
 
     status.style.color =
       "#388e3c";
 
 
     console.log(
+
       "🚃 全電車データ:",
+
       trainData
+
     );
 
 
   } catch (error) {
 
+
     console.error(error);
 
+
     status.textContent =
+
       "⚠ 電車データの読み込みに失敗しました";
+
 
     status.style.color =
       "#d32f2f";
@@ -754,74 +1197,223 @@ async function loadAllTrainData() {
 loadAllTrainData();
 
 
-/* =========================================
-   🚃 京都市営地下鉄 駅一覧
-========================================= */
 
-const karasumaStations = [
-
-  "国際会館",
-  "松ヶ崎",
-  "北山",
-  "北大路",
-  "鞍馬口",
-  "今出川",
-  "丸太町",
-  "烏丸御池",
-  "四条",
-  "五条",
-  "京都",
-  "九条",
-  "十条",
-  "くいな橋",
-  "竹田"
-
-];
+// ========================================
+// 📍 住所 → 緯度経度
+// ========================================
 
 
-const tozaiStations = [
-
-  "六地蔵",
-  "石田",
-  "醍醐",
-  "小野",
-  "椥辻",
-  "東野",
-  "山科",
-  "御陵",
-  "蹴上",
-  "東山",
-  "三条京阪",
-  "京都市役所前",
-  "烏丸御池",
-  "二条城前",
-  "二条",
-  "西大路御池",
-  "太秦天神川",
-
-  /* CSVに含まれる京津線方面 */
-  "四宮",
-  "びわ湖浜大津"
-
-];
+async function geocode(place) {
 
 
-/* =========================================
-   駅の路線を調べる
-========================================= */
+  const url =
+
+    "https://nominatim.openstreetmap.org/search" +
+
+    "?format=json" +
+
+    "&q=" +
+
+    encodeURIComponent(place);
+
+
+  const response =
+
+    await fetch(url);
+
+
+  const data =
+
+    await response.json();
+
+
+  if (data.length === 0) {
+
+    throw new Error(
+
+      place +
+      " が見つかりませんでした"
+
+    );
+
+  }
+
+
+  return {
+
+    lat:
+      parseFloat(data[0].lat),
+
+    lon:
+      parseFloat(data[0].lon)
+
+  };
+
+}
+
+
+
+// ========================================
+// 📏 距離表示
+// ========================================
+
+
+function formatDistance(meters) {
+
+
+  if (meters < 1000) {
+
+    return (
+
+      Math.round(meters) +
+      " m"
+
+    );
+
+  }
+
+
+  return (
+
+    (meters / 1000).toFixed(1) +
+    " km"
+
+  );
+
+}
+
+
+
+// ========================================
+// ⏱️ 時間表示
+// ========================================
+
+
+function formatTime(minutes) {
+
+
+  minutes =
+    Math.round(minutes);
+
+
+  if (minutes < 60) {
+
+    return (
+
+      minutes +
+      "分"
+
+    );
+
+  }
+
+
+  const hours =
+
+    Math.floor(
+      minutes / 60
+    );
+
+
+  const mins =
+
+    minutes % 60;
+
+
+  return (
+
+    hours +
+    "時間" +
+    mins +
+    "分"
+
+  );
+
+}
+
+
+
+// ========================================
+// 🚗 OSRM
+// ========================================
+
+
+async function getRoute(
+
+  start,
+  end,
+  profile
+
+) {
+
+
+  const url =
+
+    "https://router.project-osrm.org/route/v1/" +
+
+    profile +
+
+    "/" +
+
+    `${start.lon},${start.lat};` +
+
+    `${end.lon},${end.lat}` +
+
+    "?overview=full&geometries=geojson";
+
+
+  const response =
+
+    await fetch(url);
+
+
+  const data =
+
+    await response.json();
+
+
+  if (data.code !== "Ok") {
+
+    throw new Error(
+
+      "ルートを取得できませんでした"
+
+    );
+
+  }
+
+
+  return data.routes[0];
+
+}
+
+
+
+// ========================================
+// 🚇 路線判定
+// ========================================
+
 
 function getStationLine(station) {
 
-  const isKarasuma =
-    karasumaStations.includes(station);
 
-  const isTozai =
-    tozaiStations.includes(station);
+  const inKarasuma =
+
+    karasumaStations.includes(
+      station
+    );
+
+
+  const inTozai =
+
+    tozaiStations.includes(
+      station
+    );
 
 
   if (
-    isKarasuma &&
-    isTozai
+    inKarasuma &&
+    inTozai
   ) {
 
     return "both";
@@ -829,14 +1421,14 @@ function getStationLine(station) {
   }
 
 
-  if (isKarasuma) {
+  if (inKarasuma) {
 
     return "karasuma";
 
   }
 
 
-  if (isTozai) {
+  if (inTozai) {
 
     return "tozai";
 
@@ -848,157 +1440,171 @@ function getStationLine(station) {
 }
 
 
-/* =========================================
-   曜日から時刻表を選ぶ
-========================================= */
 
-function getScheduleFiles(line) {
+// ========================================
+// 🚇 時刻を分に変換
+// ========================================
 
-  const day =
-    new Date().getDay();
-
-  const holiday =
-    day === 0 ||
-    day === 6;
-
-
-  if (line === "karasuma") {
-
-    return holiday
-
-      ? [
-          trainData.karasumaHolidayUp,
-          trainData.karasumaHolidayDown
-        ]
-
-      : [
-          trainData.karasumaWeekdayUp,
-          trainData.karasumaWeekdayDown
-        ];
-
-  }
-
-
-  if (line === "tozai") {
-
-    return holiday
-
-      ? [
-          trainData.tozaiHolidayUp,
-          trainData.tozaiHolidayDown
-        ]
-
-      : [
-          trainData.tozaiWeekdayUp,
-          trainData.tozaiWeekdayDown
-        ];
-
-  }
-
-
-  return [];
-
-}
-
-
-/* =========================================
-   時刻 → 分
-========================================= */
 
 function timeToMinutes(time) {
 
+
   if (!time) {
+
     return null;
+
   }
 
 
-  time =
-    String(time)
+  const parts =
+
+    time
       .trim()
-      .replace(/[着発]$/, "");
+      .split(":");
 
 
-  const match =
-    time.match(
-      /^(\d{1,2}):(\d{2})$/
-    );
+  if (parts.length !== 2) {
 
-
-  if (!match) {
     return null;
+
+  }
+
+
+  let hour =
+    parseInt(parts[0], 10);
+
+
+  const minute =
+    parseInt(parts[1], 10);
+
+
+  if (
+
+    isNaN(hour) ||
+    isNaN(minute)
+
+  ) {
+
+    return null;
+
+  }
+
+
+  if (hour < 3) {
+
+    hour += 24;
+
   }
 
 
   return (
-    Number(match[1]) * 60 +
-    Number(match[2])
+
+    hour * 60 +
+    minute
+
   );
 
 }
 
 
-/* =========================================
-   分 → 時刻
-========================================= */
+
+// ========================================
+// 時刻表示
+// ========================================
+
 
 function minutesToTime(minutes) {
 
+
   minutes =
-    minutes % 1440;
+
+    minutes % (24 * 60);
+
 
   const hour =
-    Math.floor(minutes / 60);
+
+    Math.floor(
+      minutes / 60
+    );
+
 
   const minute =
+
     minutes % 60;
 
 
   return (
-    String(hour) +
+
+    String(hour).padStart(2, "0") +
     ":" +
     String(minute).padStart(2, "0")
+
   );
 
 }
 
 
-/* =========================================
-   現在時刻
-========================================= */
+
+// ========================================
+// 現在時刻
+// ========================================
+
 
 function getCurrentMinutes() {
+
 
   const now =
     new Date();
 
+
   return (
+
     now.getHours() * 60 +
     now.getMinutes()
+
   );
 
 }
 
 
-/* =========================================
-   CSVから駅の列を探す
-========================================= */
 
-function findHeaderRow(data) {
+// ========================================
+// CSVの駅名ヘッダーを探す
+// ========================================
+
+
+function findHeaderRow(rows) {
+
 
   for (
+
     let i = 0;
-    i < data.length;
+
+    i < Math.min(rows.length, 10);
+
     i++
+
   ) {
 
-    const row = data[i];
 
-    if (
-      row.includes("竹田") ||
-      row.includes("京都") ||
-      row.includes("烏丸御池") ||
-      row.includes("太秦天神川")
-    ) {
+    const row = rows[i];
+
+
+    if (!row) continue;
+
+
+    const count =
+
+      row.filter(cell =>
+
+        karasumaStations.includes(cell) ||
+
+        tozaiStations.includes(cell)
+
+      ).length;
+
+
+    if (count >= 3) {
 
       return i;
 
@@ -1012,176 +1618,69 @@ function findHeaderRow(data) {
 }
 
 
-/* =========================================
-   次の直通電車を探す
-========================================= */
+
+// ========================================
+// 次の直通電車
+// ========================================
+
 
 function findNextDirectTrain(
-  startStation,
-  endStation,
-  files,
+
+  rows,
+  fromStation,
+  toStation,
   afterMinutes
+
 ) {
 
-  let best = null;
+
+  const headerIndex =
+    findHeaderRow(rows);
 
 
-  for (
-    const data of files
-  ) {
+  if (headerIndex < 0) {
 
-    if (!data) {
-      continue;
-    }
-
-
-    const headerIndex =
-      findHeaderRow(data);
-
-
-    if (headerIndex < 0) {
-      continue;
-    }
-
-
-    const header =
-      data[headerIndex];
-
-
-    const startIndex =
-      header.indexOf(startStation);
-
-    const endIndex =
-      header.indexOf(endStation);
-
-
-    if (
-      startIndex < 0 ||
-      endIndex < 0
-    ) {
-
-      continue;
-
-    }
-
-
-    for (
-      let r = headerIndex + 1;
-      r < data.length;
-      r++
-    ) {
-
-      const row =
-        data[r];
-
-
-      if (
-        !row ||
-        row.length === 0
-      ) {
-
-        continue;
-
-      }
-
-
-      const startTime =
-        timeToMinutes(
-          row[startIndex]
-        );
-
-
-      const endTime =
-        timeToMinutes(
-          row[endIndex]
-        );
-
-
-      if (
-        startTime === null ||
-        endTime === null
-      ) {
-
-        continue;
-
-      }
-
-
-      if (
-        startTime < afterMinutes
-      ) {
-
-        continue;
-
-      }
-
-
-      if (
-        endTime < startTime
-      ) {
-
-        continue;
-
-      }
-
-
-      const result = {
-
-        startTime,
-        endTime,
-
-        duration:
-          endTime - startTime
-
-      };
-
-
-      if (
-        !best ||
-        result.startTime <
-        best.startTime
-      ) {
-
-        best = result;
-
-      }
-
-    }
+    return null;
 
   }
 
 
-  return best;
-
-}
-
-
-/* =========================================
-   🔄 乗り換え検索
-========================================= */
-
-function findTransferTrain(
-  startStation,
-  endStation,
-  startLine,
-  endLine,
-  afterMinutes
-) {
-
-  const transferStation =
-    "烏丸御池";
+  const header =
+    rows[headerIndex];
 
 
-  const firstFiles =
-    getScheduleFiles(startLine);
+  const fromIndex =
+    header.indexOf(fromStation);
 
-  const secondFiles =
-    getScheduleFiles(endLine);
+
+  const toIndex =
+    header.indexOf(toStation);
 
 
   if (
-    firstFiles.length === 0 ||
-    secondFiles.length === 0
+
+    fromIndex < 0 ||
+    toIndex < 0
+
+  ) {
+
+    return null;
+
+  }
+
+
+  const fromOrder =
+    fromIndex;
+
+
+  const toOrder =
+    toIndex;
+
+
+  // 同じ方向でない場合は不可
+
+  if (
+    fromOrder === toOrder
   ) {
 
     return null;
@@ -1192,42 +1691,42 @@ function findTransferTrain(
   let best = null;
 
 
-  /*
-    まず出発駅 → 烏丸御池
-  */
-
   for (
-    const data of firstFiles
+
+    let r =
+      headerIndex + 1;
+
+    r < rows.length;
+
+    r++
+
   ) {
 
-    if (!data) {
-      continue;
-    }
+
+    const row =
+      rows[r];
 
 
-    const headerIndex =
-      findHeaderRow(data);
+    if (!row) continue;
 
 
-    if (headerIndex < 0) {
-      continue;
-    }
+    const depart =
+      timeToMinutes(
+        row[fromIndex]
+      );
 
 
-    const header =
-      data[headerIndex];
-
-
-    const startIndex =
-      header.indexOf(startStation);
-
-    const transferIndex =
-      header.indexOf(transferStation);
+    const arrive =
+      timeToMinutes(
+        row[toIndex]
+      );
 
 
     if (
-      startIndex < 0 ||
-      transferIndex < 0
+
+      depart === null ||
+      arrive === null
+
     ) {
 
       continue;
@@ -1235,109 +1734,31 @@ function findTransferTrain(
     }
 
 
-    for (
-      let r = headerIndex + 1;
-      r < data.length;
-      r++
+    if (
+
+      depart >= afterMinutes &&
+      arrive >= depart
+
     ) {
 
-      const row =
-        data[r];
-
-
-      const firstStart =
-        timeToMinutes(
-          row[startIndex]
-        );
-
-      const firstEnd =
-        timeToMinutes(
-          row[transferIndex]
-        );
-
 
       if (
-        firstStart === null ||
-        firstEnd === null
-      ) {
 
-        continue;
-
-      }
-
-
-      if (
-        firstStart < afterMinutes
-      ) {
-
-        continue;
-
-      }
-
-
-      if (
-        firstEnd < firstStart
-      ) {
-
-        continue;
-
-      }
-
-
-      /*
-        乗り換え時間
-        4分確保
-      */
-
-      const secondAfter =
-        firstEnd + 4;
-
-
-      const second =
-        findNextDirectTrain(
-          transferStation,
-          endStation,
-          secondFiles,
-          secondAfter
-        );
-
-
-      if (!second) {
-        continue;
-      }
-
-
-      const totalTime =
-        second.endTime -
-        firstStart;
-
-
-      const result = {
-
-        firstStart,
-        firstEnd,
-
-        secondStart:
-          second.startTime,
-
-        secondEnd:
-          second.endTime,
-
-        transfer:
-          transferStation,
-
-        totalTime
-
-      };
-
-
-      if (
         !best ||
-        result.totalTime <
-        best.totalTime
+        depart < best.depart
+
       ) {
 
-        best = result;
+
+        best = {
+
+          depart,
+
+          arrive,
+
+          row
+
+        };
 
       }
 
@@ -1351,353 +1772,453 @@ function findTransferTrain(
 }
 
 
-/* =========================================
-   🚃 電車検索
-========================================= */
 
-function searchTrain() {
-
-  const startStation =
-    document
-      .getElementById(
-        "train-start"
-      )
-      .value
-      .trim();
+// ========================================
+// 🚇 路線の候補を探す
+// ========================================
 
 
-  const endStation =
-    document
-      .getElementById(
-        "train-end"
-      )
-      .value
-      .trim();
+function searchLineTrain(
+
+  line,
+  fromStation,
+  toStation,
+  afterMinutes
+
+) {
 
 
-  const resultBox =
-    document.getElementById(
-      "train-result"
+  const isWeekday =
+
+    ![0, 6].includes(
+      new Date().getDay()
     );
 
 
-  if (
-    !startStation ||
-    !endStation
-  ) {
-
-    resultBox.innerHTML =
-      "⚠️ 出発駅と到着駅を入力してください。";
-
-    return;
-
-  }
+  let files;
 
 
-  if (
-    startStation ===
-    endStation
-  ) {
-
-    resultBox.innerHTML =
-      "出発駅と到着駅が同じです。";
-
-    return;
-
-  }
+  if (line === "karasuma") {
 
 
-  if (
-    Object.keys(trainData).length <
-    8
-  ) {
+    files = isWeekday
 
-    resultBox.innerHTML =
-      "🚃 電車データを読み込み中です。少し待ってからもう一度検索してください。";
+      ? [
 
-    return;
+          trainData.karasumaWeekdayUp,
+
+          trainData.karasumaWeekdayDown
+
+        ]
+
+      : [
+
+          trainData.karasumaHolidayUp,
+
+          trainData.karasumaHolidayDown
+
+        ];
 
   }
 
 
-  const startLine =
-    getStationLine(startStation);
-
-  const endLine =
-    getStationLine(endStation);
+  if (line === "tozai") {
 
 
-  if (
-    !startLine ||
-    !endLine
-  ) {
+    files = isWeekday
 
-    resultBox.innerHTML =
-      "⚠️ 駅名を確認してください。<br>" +
-      "京都市営地下鉄の駅を入力してください。";
+      ? [
 
-    return;
+          trainData.tozaiWeekdayUp,
+
+          trainData.tozaiWeekdayDown
+
+        ]
+
+      : [
+
+          trainData.tozaiHolidayUp,
+
+          trainData.tozaiHolidayDown
+
+        ];
 
   }
 
 
-  /*
-    現在時刻以降の電車を検索
-  */
+  if (!files) {
 
-  const now =
-    getCurrentMinutes();
+    return null;
 
-
-  let result = null;
+  }
 
 
-  /*
-    同じ路線
-  */
+  let best = null;
 
-  if (
-    startLine === endLine
+
+  for (
+
+    const rows of files
+
   ) {
 
-    result =
+
+    if (!rows) continue;
+
+
+    const result =
+
       findNextDirectTrain(
-        startStation,
-        endStation,
-        getScheduleFiles(
-          startLine
-        ),
-        now
+
+        rows,
+
+        fromStation,
+
+        toStation,
+
+        afterMinutes
+
       );
 
 
-    if (result) {
+    if (
 
-      document.getElementById(
-        "train-line"
-      ).textContent =
-        startLine === "karasuma"
-          ? "烏丸線"
-          : "東西線";
+      result &&
 
+      (!best ||
+       result.depart < best.depart)
 
-      document.getElementById(
-        "train-time"
-      ).textContent =
-        formatTime(
-          result.duration
-        );
+    ) {
 
+      best = {
 
-      resultBox.innerHTML =
+        ...result,
 
-        "🚃 <strong>直通</strong><br>" +
+        line
 
-        startStation +
-        " → " +
-        endStation +
-        "<br>" +
-
-        "🕐 発車：<strong>" +
-        minutesToTime(
-          result.startTime
-        ) +
-        "</strong><br>" +
-
-        "🏁 到着：<strong>" +
-        minutesToTime(
-          result.endTime
-        ) +
-        "</strong><br>" +
-
-        "⏱ 所要時間：" +
-        formatTime(
-          result.duration
-        );
-
-      return;
+      };
 
     }
 
   }
 
 
-  /*
-    別路線
-    → 烏丸御池で乗り換え
-  */
-
-  let actualStartLine =
-    startLine;
-
-  let actualEndLine =
-    endLine;
-
-
-  /*
-    烏丸御池は両路線なので、
-    そのまま直通検索できない場合だけ
-    乗り換え検索をする
-  */
-
-  if (
-    startLine === "both"
-  ) {
-
-    actualStartLine =
-      "karasuma";
-
-  }
-
-
-  if (
-    endLine === "both"
-  ) {
-
-    actualEndLine =
-      "karasuma";
-
-  }
-
-
-  if (
-    actualStartLine !==
-    actualEndLine
-  ) {
-
-    result =
-      findTransferTrain(
-        startStation,
-        endStation,
-        actualStartLine,
-        actualEndLine,
-        now
-      );
-
-  }
-
-
-  if (!result) {
-
-    resultBox.innerHTML =
-      "⚠️ 現在時刻以降に利用できる電車が見つかりませんでした。";
-
-    return;
-
-  }
-
-
-  document.getElementById(
-    "train-line"
-  ).textContent =
-    "乗り換え";
-
-
-  document.getElementById(
-    "train-time"
-  ).textContent =
-    formatTime(
-      result.totalTime
-    );
-
-
-  resultBox.innerHTML =
-
-    "🚃 <strong>乗り換えあり</strong><br>" +
-
-    startStation +
-    " → " +
-    result.transfer +
-    " → " +
-    endStation +
-
-    "<br><br>" +
-
-    "① 🕐 " +
-    startStation +
-    " 発：<strong>" +
-    minutesToTime(
-      result.firstStart
-    ) +
-    "</strong><br>" +
-
-    "① 🏁 " +
-    result.transfer +
-    " 着：<strong>" +
-    minutesToTime(
-      result.firstEnd
-    ) +
-    "</strong><br>" +
-
-    "🔄 烏丸御池で乗り換え<br>" +
-
-    "② 🕐 " +
-    result.transfer +
-    " 発：<strong>" +
-    minutesToTime(
-      result.secondStart
-    ) +
-    "</strong><br>" +
-
-    "② 🏁 " +
-    endStation +
-    " 着：<strong>" +
-    minutesToTime(
-      result.secondEnd
-    ) +
-    "</strong><br><br>" +
-
-    "⏱ 合計：約" +
-    formatTime(
-      result.totalTime
-    );
-
+  return best;
 
 }
 
 
-/* =========================================
-   📍 住所 → 緯度経度
-========================================= */
 
-async function geocode(place) {
-
-  const url =
-    "https://nominatim.openstreetmap.org/search" +
-    "?format=json&q=" +
-    encodeURIComponent(place);
+// ========================================
+// 🚇 同一路線・乗換検索
+// ========================================
 
 
-  const response =
-    await fetch(url);
+function findTrainRoute(
 
+  fromStation,
+  toStation,
+  afterMinutes
 
-  const data =
-    await response.json();
+) {
 
 
   if (
-    data.length === 0
+    fromStation ===
+    toStation
   ) {
 
-    throw new Error(
-      place +
-      " が見つかりませんでした"
-    );
+    return {
+
+      type: "same",
+
+      totalMinutes: 0,
+
+      distanceKm: 0
+
+    };
 
   }
 
 
+  const fromLine =
+    getStationLine(fromStation);
+
+
+  const toLine =
+    getStationLine(toStation);
+
+
+  // --------------------------
+  // 烏丸御池が出発駅
+  // --------------------------
+
+  if (
+    fromStation ===
+    "烏丸御池"
+  ) {
+
+
+    const line =
+
+      toLine === "tozai"
+
+        ? "tozai"
+
+        : "karasuma";
+
+
+    const train =
+
+      searchLineTrain(
+
+        line,
+
+        fromStation,
+
+        toStation,
+
+        afterMinutes
+
+      );
+
+
+    if (!train) return null;
+
+
+    return {
+
+      type: "direct",
+
+      train,
+
+      totalMinutes:
+        train.arrive -
+        afterMinutes,
+
+      distanceKm:
+        getRailDistance(
+          fromStation,
+          toStation,
+          line
+        )
+
+    };
+
+  }
+
+
+
+  // --------------------------
+  // 烏丸御池が到着駅
+  // --------------------------
+
+  if (
+    toStation ===
+    "烏丸御池"
+  ) {
+
+
+    const line =
+
+      fromLine === "tozai"
+
+        ? "tozai"
+
+        : "karasuma";
+
+
+    const train =
+
+      searchLineTrain(
+
+        line,
+
+        fromStation,
+
+        toStation,
+
+        afterMinutes
+
+      );
+
+
+    if (!train) return null;
+
+
+    return {
+
+      type: "direct",
+
+      train,
+
+      totalMinutes:
+        train.arrive -
+        afterMinutes,
+
+      distanceKm:
+        getRailDistance(
+          fromStation,
+          toStation,
+          line
+        )
+
+    };
+
+  }
+
+
+
+  // --------------------------
+  // 同一路線
+  // --------------------------
+
+  if (
+    fromLine === toLine &&
+    fromLine !== "both"
+  ) {
+
+
+    const train =
+
+      searchLineTrain(
+
+        fromLine,
+
+        fromStation,
+
+        toStation,
+
+        afterMinutes
+
+      );
+
+
+    if (!train) return null;
+
+
+    return {
+
+      type: "direct",
+
+      train,
+
+      totalMinutes:
+        train.arrive -
+        afterMinutes,
+
+      distanceKm:
+        getRailDistance(
+          fromStation,
+          toStation,
+          fromLine
+        )
+
+    };
+
+  }
+
+
+
+  // --------------------------
+  // 烏丸御池乗換
+  // --------------------------
+
+  const firstLine =
+
+    fromLine === "tozai"
+
+      ? "tozai"
+
+      : "karasuma";
+
+
+  const secondLine =
+
+    toLine === "tozai"
+
+      ? "tozai"
+
+      : "karasuma";
+
+
+  const first =
+
+    searchLineTrain(
+
+      firstLine,
+
+      fromStation,
+
+      "烏丸御池",
+
+      afterMinutes
+
+    );
+
+
+  if (!first) return null;
+
+
+  // 乗換4分
+
+  const secondStart =
+
+    first.arrive + 4;
+
+
+  const second =
+
+    searchLineTrain(
+
+      secondLine,
+
+      "烏丸御池",
+
+      toStation,
+
+      secondStart
+
+    );
+
+
+  if (!second) return null;
+
+
+  const wait =
+
+    second.depart -
+    first.arrive;
+
+
   return {
 
-    lat:
-      parseFloat(
-        data[0].lat
-      ),
+    type: "transfer",
 
-    lon:
-      parseFloat(
-        data[0].lon
+    first,
+
+    second,
+
+    transferMinutes: wait,
+
+    totalMinutes:
+      second.arrive -
+      afterMinutes,
+
+    distanceKm:
+
+      getRailDistance(
+        fromStation,
+        "烏丸御池",
+        firstLine
+      )
+
+      +
+
+      getRailDistance(
+        "烏丸御池",
+        toStation,
+        secondLine
       )
 
   };
@@ -1705,141 +2226,360 @@ async function geocode(place) {
 }
 
 
-/* =========================================
-   距離表示
-========================================= */
 
-function formatDistance(meters) {
-
-  if (
-    meters < 1000
-  ) {
-
-    return (
-      Math.round(meters) +
-      " m"
-    );
-
-  }
+// ========================================
+// 🚇 駅間距離を計算
+// ========================================
 
 
-  return (
-    (meters / 1000)
-      .toFixed(1) +
-    " km"
-  );
+function getRailDistance(
 
-}
+  fromStation,
+  toStation,
+  line
 
-
-/* =========================================
-   時間表示
-========================================= */
-
-function formatTime(minutes) {
-
-  minutes =
-    Math.round(minutes);
-
-
-  if (
-    minutes < 60
-  ) {
-
-    return (
-      minutes +
-      "分"
-    );
-
-  }
-
-
-  const hours =
-    Math.floor(
-      minutes / 60
-    );
-
-
-  const mins =
-    minutes % 60;
-
-
-  return (
-    hours +
-    "時間" +
-    mins +
-    "分"
-  );
-
-}
-
-
-/* =========================================
-   🚗 OSRM
-========================================= */
-
-async function getRoute(
-  start,
-  end,
-  profile
 ) {
 
-  const url =
-    "https://router.project-osrm.org/route/v1/" +
-    profile +
-    "/" +
-    start.lon +
-    "," +
-    start.lat +
-    ";" +
-    end.lon +
-    "," +
-    end.lat +
-    "?overview=full&geometries=geojson";
 
+  let stations;
 
-  const response =
-    await fetch(url);
-
-
-  const data =
-    await response.json();
+  let distances;
 
 
   if (
-    data.code !== "Ok"
+    line === "karasuma"
   ) {
 
-    throw new Error(
-      "ルートを取得できませんでした"
-    );
+    stations =
+      karasumaStations;
+
+    distances =
+      karasumaDistances;
+
+  } else {
+
+    stations =
+      tozaiStations;
+
+    distances =
+      tozaiDistances;
 
   }
 
 
-  return data.routes[0];
+  const from =
+    stations.indexOf(
+      fromStation
+    );
+
+
+  const to =
+    stations.indexOf(
+      toStation
+    );
+
+
+  if (
+    from < 0 ||
+    to < 0
+  ) {
+
+    return 0;
+
+  }
+
+
+  let distance = 0;
+
+
+  const start =
+    Math.min(from, to);
+
+
+  const end =
+    Math.max(from, to);
+
+
+  for (
+
+    let i = start;
+
+    i < end;
+
+    i++
+
+  ) {
+
+    distance +=
+      distances[i] || 0;
+
+  }
+
+
+  return distance;
 
 }
 
 
-/* =========================================
-   🚶🚲🚗 住所からルート検索
-========================================= */
+
+// ========================================
+// 🚃 電車検索結果を表示
+// ========================================
+
+
+function displayTrainResult(
+
+  result,
+  fromStation,
+  toStation
+
+) {
+
+
+  const lineElement =
+
+    document.getElementById(
+      "train-line"
+    );
+
+
+  const timeElement =
+
+    document.getElementById(
+      "train-time"
+    );
+
+
+  const distanceElement =
+
+    document.getElementById(
+      "train-distance"
+    );
+
+
+  const co2Element =
+
+    document.getElementById(
+      "train-co2"
+    );
+
+
+  const statusElement =
+
+    document.getElementById(
+      "train-status"
+    );
+
+
+  if (!result) {
+
+
+    lineElement.textContent =
+      "--";
+
+
+    timeElement.textContent =
+      "--";
+
+
+    distanceElement.textContent =
+      "--";
+
+
+    co2Element.textContent =
+      "--";
+
+
+    statusElement.textContent =
+
+      "この条件で電車を見つけられませんでした";
+
+
+    statusElement.style.color =
+      "#d32f2f";
+
+
+    return;
+
+  }
+
+
+
+  const distanceKm =
+
+    result.distanceKm;
+
+
+  const co2 =
+
+    distanceKm *
+    TRAIN_CO2_PER_KM;
+
+
+  // --------------------------
+  // 区間
+  // --------------------------
+
+  if (
+    result.type ===
+    "transfer"
+  ) {
+
+
+    lineElement.textContent =
+
+      "乗換1回";
+
+
+    statusElement.textContent =
+
+      `${fromStation} → 烏丸御池 → ${toStation}`;
+
+  }
+
+  else {
+
+
+    lineElement.textContent =
+
+      fromStation +
+      " → " +
+      toStation;
+
+
+    statusElement.textContent =
+
+      result.train
+
+        ? (
+            result.train.line ===
+            "karasuma"
+              ? "烏丸線"
+              : "東西線"
+          )
+
+        : "同一駅";
+
+  }
+
+
+
+  // --------------------------
+  // 時間
+  // --------------------------
+
+  timeElement.textContent =
+
+    formatTime(
+      result.totalMinutes
+    );
+
+
+
+  // --------------------------
+  // 距離
+  // --------------------------
+
+  distanceElement.textContent =
+
+    distanceKm.toFixed(1) +
+    " km";
+
+
+
+  // --------------------------
+  // CO₂
+  // --------------------------
+
+  co2Element.textContent =
+
+    Math.round(co2) +
+    " g";
+
+
+
+  statusElement.style.color =
+    "#388e3c";
+
+}
+
+
+
+// ========================================
+// 🚃 電車を検索
+// ========================================
+
+
+function searchTrain(
+
+  fromStation,
+  toStation
+
+) {
+
+
+  if (
+    Object.keys(
+      trainData
+    ).length < 8
+  ) {
+
+    console.log(
+      "電車CSV読み込み待ち"
+    );
+
+    return;
+
+  }
+
+
+  const result =
+
+    findTrainRoute(
+
+      fromStation,
+
+      toStation,
+
+      getCurrentMinutes()
+
+    );
+
+
+  displayTrainResult(
+
+    result,
+
+    fromStation,
+
+    toStation
+
+  );
+
+}
+
+
+
+// ========================================
+// 🌱 メイン検索
+// ========================================
+
 
 async function searchRoute() {
 
+
   const startText =
-    document
-      .getElementById("start")
-      .value
-      .trim();
+
+    document.getElementById(
+      "start"
+    ).value;
 
 
   const endText =
-    document
-      .getElementById("end")
-      .value
-      .trim();
+
+    document.getElementById(
+      "end"
+    ).value;
 
 
   if (
@@ -1847,9 +2587,13 @@ async function searchRoute() {
     !endText
   ) {
 
+
     alert(
+
       "出発地と目的地を入力してください！"
+
     );
+
 
     return;
 
@@ -1858,40 +2602,47 @@ async function searchRoute() {
 
   try {
 
-    /*
-      住所検索
-    */
+
+    // --------------------------
+    // 住所検索
+    // --------------------------
 
     const start =
+
       await geocode(
         startText
       );
 
 
     const end =
+
       await geocode(
         endText
       );
 
 
-    /*
-      地図
-    */
+
+    // --------------------------
+    // 地図
+    // --------------------------
 
     map.setView(
+
       [
         start.lat,
         start.lon
       ],
+
       13
+
     );
 
 
-    /*
-      前のルート削除
-    */
+
+    // 前の線を消す
 
     routeLines.forEach(
+
       line => {
 
         map.removeLayer(
@@ -1899,88 +2650,116 @@ async function searchRoute() {
         );
 
       }
+
     );
 
 
     routeLines = [];
 
 
-    /*
-      出発地
-    */
+
+    // --------------------------
+    // 出発地マーカー
+    // --------------------------
 
     L.marker(
+
       [
         start.lat,
         start.lon
       ]
+
     )
+
     .addTo(map)
+
     .bindPopup(
       "出発地"
     )
+
     .openPopup();
 
 
-    /*
-      目的地
-    */
+
+    // --------------------------
+    // 目的地マーカー
+    // --------------------------
 
     L.marker(
+
       [
         end.lat,
         end.lon
       ]
+
     )
+
     .addTo(map)
+
     .bindPopup(
       "目的地"
     );
 
 
-    /*
-      徒歩
-    */
+
+    // --------------------------
+    // 徒歩
+    // --------------------------
 
     const walk =
+
       await getRoute(
+
         start,
         end,
         "walking"
+
       );
 
 
-    /*
-      自転車
-    */
+
+    // --------------------------
+    // 自転車
+    // --------------------------
 
     const bike =
+
       await getRoute(
+
         start,
         end,
         "cycling"
+
       );
 
 
-    /*
-      車
-    */
+
+    // --------------------------
+    // 車
+    // --------------------------
 
     const car =
+
       await getRoute(
+
         start,
         end,
         "driving"
+
       );
 
 
-    /*
-      徒歩ルート表示
-    */
+
+    // --------------------------
+    // 徒歩ルート表示
+    // --------------------------
 
     const walkLine =
+
       L.geoJSON(
+
         walk.geometry
+
       ).addTo(map);
 
 
@@ -1989,13 +2768,15 @@ async function searchRoute() {
     );
 
 
-    /*
-      距離
-    */
+
+    // --------------------------
+    // 距離
+    // --------------------------
 
     document.getElementById(
       "walk-distance"
     ).textContent =
+
       formatDistance(
         walk.distance
       );
@@ -2004,6 +2785,7 @@ async function searchRoute() {
     document.getElementById(
       "bike-distance"
     ).textContent =
+
       formatDistance(
         bike.distance
       );
@@ -2012,17 +2794,19 @@ async function searchRoute() {
     document.getElementById(
       "car-distance"
     ).textContent =
+
       formatDistance(
         car.distance
       );
 
 
-    /*
-      徒歩時間
-      4.5 km/h
-    */
+
+    // --------------------------
+    // 時間
+    // --------------------------
 
     const walkTime =
+
       (
         walk.distance /
         1000
@@ -2034,17 +2818,15 @@ async function searchRoute() {
     document.getElementById(
       "walk-time"
     ).textContent =
+
       formatTime(
         walkTime
       );
 
 
-    /*
-      自転車時間
-      15 km/h
-    */
 
     const bikeTime =
+
       (
         bike.distance /
         1000
@@ -2056,17 +2838,15 @@ async function searchRoute() {
     document.getElementById(
       "bike-time"
     ).textContent =
+
       formatTime(
         bikeTime
       );
 
 
-    /*
-      車時間
-      50 km/h
-    */
 
     const carTime =
+
       (
         car.distance /
         1000
@@ -2078,17 +2858,19 @@ async function searchRoute() {
     document.getElementById(
       "car-time"
     ).textContent =
+
       formatTime(
         carTime
       );
 
 
-    /*
-      車CO₂
-      130 g/km
-    */
+
+    // --------------------------
+    // 車CO₂
+    // --------------------------
 
     const carCO2 =
+
       (
         car.distance /
         1000
@@ -2099,25 +2881,150 @@ async function searchRoute() {
     document.getElementById(
       "car-co2"
     ).textContent =
+
       Math.round(
         carCO2
       ) +
       " g";
 
 
+
+    // --------------------------
+    // 🚃 電車
+    //
+    // 今回は駅名入力ではなく、
+    // まず動作確認用として
+    // 出発地・目的地が駅名の場合
+    // 電車検索を行う
+    // --------------------------
+
+    const possibleStartStation =
+
+      findStationName(
+        startText
+      );
+
+
+    const possibleEndStation =
+
+      findStationName(
+        endText
+      );
+
+
+    if (
+
+      possibleStartStation &&
+      possibleEndStation
+
+    ) {
+
+
+      searchTrain(
+
+        possibleStartStation,
+
+        possibleEndStation
+
+      );
+
+    }
+
+    else {
+
+
+      document.getElementById(
+        "train-line"
+      ).textContent =
+        "--";
+
+
+      document.getElementById(
+        "train-time"
+      ).textContent =
+        "--";
+
+
+      document.getElementById(
+        "train-distance"
+      ).textContent =
+        "--";
+
+
+      document.getElementById(
+        "train-co2"
+      ).textContent =
+        "--";
+
+
+      document.getElementById(
+        "train-status"
+      ).textContent =
+
+        "駅名を入力すると電車を検索できます";
+
+    }
+
+
   } catch (error) {
 
-    console.error(
-      error
-    );
+
+    console.error(error);
 
 
     alert(
+
       "ルート検索でエラーが発生しました。\n" +
+
       error.message
+
     );
 
   }
+
+}
+
+
+
+// ========================================
+// 🚇 入力された名前が駅名か確認
+// ========================================
+
+
+function findStationName(text) {
+
+
+  const allStations =
+
+    [
+
+      ...karasumaStations,
+
+      ...tozaiStations
+
+    ];
+
+
+  // 完全一致
+
+  const exact =
+
+    allStations.find(
+
+      station =>
+        text.includes(station)
+
+    );
+
+
+  if (exact) {
+
+    return exact;
+
+  }
+
+
+  return null;
 
 }
 
