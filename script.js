@@ -15,13 +15,10 @@ map.attributionControl.addAttribution(
   'OpenFreeMap © OpenMapTiles Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'
 );
 
-
 let routeLines = [];
 let mapMarkers = [];
 
-
 function clearMapLayers() {
-
   routeLines.forEach(
     x => map.removeLayer(x)
   );
@@ -32,12 +29,9 @@ function clearMapLayers() {
 
   routeLines = [];
   mapMarkers = [];
-
 }
 
-
 function addMarker(point, text) {
-
   const marker = L.marker([
     point.lat,
     point.lon
@@ -48,7 +42,6 @@ function addMarker(point, text) {
   mapMarkers.push(marker);
 
   return marker;
-
 }
 
 
@@ -84,7 +77,6 @@ const trainFiles = {
 
 };
 
-
 let trainData = {};
 
 
@@ -112,7 +104,6 @@ const karasumaStations = [
 
 ];
 
-
 const tozaiStations = [
 
   "六地蔵",
@@ -138,7 +129,6 @@ const tozaiStations = [
 
 // ============================================================
 // 🚇 駅間距離
-// 単位 km
 // ============================================================
 
 const karasumaDistances = [
@@ -160,7 +150,6 @@ const karasumaDistances = [
 
 ];
 
-
 const tozaiDistances = [
 
   1.1,
@@ -181,7 +170,6 @@ const tozaiDistances = [
   1.5
 
 ];
-
 
 const TRAIN_CO2_PER_KM = 20;
 
@@ -286,7 +274,6 @@ const stationCoords = {
     [35.0100, 135.7155]
 
 };
-
 
 function stationPoint(name) {
 
@@ -452,7 +439,6 @@ function parseCSV(text) {
     const next =
       text[i + 1];
 
-
     if (ch === '"') {
 
       if (
@@ -474,7 +460,6 @@ function parseCSV(text) {
 
     }
 
-
     if (
       ch === "," &&
       !insideQuotes
@@ -486,7 +471,6 @@ function parseCSV(text) {
       continue;
 
     }
-
 
     if (
       (ch === "\n" ||
@@ -514,11 +498,9 @@ function parseCSV(text) {
 
     }
 
-
     cell += ch;
 
   }
-
 
   if (
     cell !== "" ||
@@ -529,7 +511,6 @@ function parseCSV(text) {
     rows.push(row);
 
   }
-
 
   return rows;
 
@@ -565,13 +546,11 @@ async function loadAllTrainData() {
 
     }
 
-
     status.textContent =
       "✓ 電車データ8件を読み込みました";
 
     status.style.color =
       "#388e3c";
-
 
   } catch (error) {
 
@@ -590,7 +569,6 @@ async function loadAllTrainData() {
 
 }
 
-
 loadAllTrainData();
 
 
@@ -603,7 +581,6 @@ let lastGeocodeTime = 0;
 const geocodeCache =
   new Map();
 
-
 function sleep(ms) {
 
   return new Promise(
@@ -612,7 +589,6 @@ function sleep(ms) {
   );
 
 }
-
 
 async function geocode(place) {
 
@@ -626,7 +602,6 @@ async function geocode(place) {
     return geocodeCache.get(key);
 
   }
-
 
   const wait =
     Math.max(
@@ -647,7 +622,6 @@ async function geocode(place) {
   lastGeocodeTime =
     Date.now();
 
-
   const url =
     "https://nominatim.openstreetmap.org/search" +
     "?format=jsonv2" +
@@ -655,7 +629,6 @@ async function geocode(place) {
     "&accept-language=ja" +
     "&q=" +
     encodeURIComponent(key);
-
 
   const response =
     await fetch(
@@ -668,7 +641,6 @@ async function geocode(place) {
       }
     );
 
-
   if (!response.ok) {
 
     throw new Error(
@@ -677,10 +649,8 @@ async function geocode(place) {
 
   }
 
-
   const data =
     await response.json();
-
 
   if (!data.length) {
 
@@ -690,7 +660,6 @@ async function geocode(place) {
     );
 
   }
-
 
   const result = {
 
@@ -706,12 +675,10 @@ async function geocode(place) {
 
   };
 
-
   geocodeCache.set(
     key,
     result
   );
-
 
   return result;
 
@@ -735,10 +702,8 @@ async function getRoute(
     `${start.lon},${start.lat};${end.lon},${end.lat}` +
     "?overview=full&geometries=geojson";
 
-
   const response =
     await fetch(url);
-
 
   if (!response.ok) {
 
@@ -749,10 +714,8 @@ async function getRoute(
 
   }
 
-
   const data =
     await response.json();
-
 
   if (
     data.code !== "Ok" ||
@@ -765,7 +728,6 @@ async function getRoute(
     );
 
   }
-
 
   return data.routes[0];
 
@@ -789,7 +751,6 @@ function formatDistance(meters) {
 
   }
 
-
   return (
     (meters / 1000)
       .toFixed(1) +
@@ -798,7 +759,6 @@ function formatDistance(meters) {
 
 }
 
-
 function formatTime(minutes) {
 
   minutes =
@@ -806,7 +766,6 @@ function formatTime(minutes) {
       0,
       Math.round(minutes)
     );
-
 
   if (
     minutes < 60
@@ -819,7 +778,6 @@ function formatTime(minutes) {
 
   }
 
-
   const hours =
     Math.floor(
       minutes / 60
@@ -827,7 +785,6 @@ function formatTime(minutes) {
 
   const mins =
     minutes % 60;
-
 
   return (
     hours +
@@ -855,7 +812,6 @@ function getCurrentMinutes() {
     now.getHours() * 60 +
     now.getMinutes();
 
-  // 深夜0～2時は時刻表の翌日扱い
   if (
     now.getHours() < 3
   ) {
@@ -884,17 +840,14 @@ function parseTime(value) {
 
   }
 
-
   const text =
     String(value)
       .trim();
-
 
   const match =
     text.match(
       /(\d{1,2})[:：](\d{2})/
     );
-
 
   if (!match) {
 
@@ -902,13 +855,11 @@ function parseTime(value) {
 
   }
 
-
   let hour =
     Number(match[1]);
 
   const minute =
     Number(match[2]);
-
 
   if (
     hour < 3
@@ -917,7 +868,6 @@ function parseTime(value) {
     hour += 24;
 
   }
-
 
   return (
     hour * 60 +
@@ -942,7 +892,6 @@ function minutesToTime(minutes) {
 
   }
 
-
   const h =
     Math.floor(
       minutes / 60
@@ -950,7 +899,6 @@ function minutesToTime(minutes) {
 
   const m =
     minutes % 60;
-
 
   return (
     String(h).padStart(2, "0") +
@@ -977,7 +925,6 @@ function findHeaderRow(
       15
     );
 
-
   for (
     let i = 0;
     i < max;
@@ -986,7 +933,6 @@ function findHeaderRow(
 
     const row =
       rows[i];
-
 
     const hasFrom =
       row.includes(
@@ -998,7 +944,6 @@ function findHeaderRow(
         toStation
       );
 
-
     if (
       hasFrom &&
       hasTo
@@ -1009,7 +954,6 @@ function findHeaderRow(
     }
 
   }
-
 
   return -1;
 
@@ -1034,7 +978,6 @@ function findNextDirectTrain(
       toStation
     );
 
-
   if (
     headerIndex < 0
   ) {
@@ -1043,10 +986,8 @@ function findNextDirectTrain(
 
   }
 
-
   const header =
     rows[headerIndex];
-
 
   const fromIndex =
     header.indexOf(
@@ -1058,7 +999,6 @@ function findNextDirectTrain(
       toStation
     );
 
-
   if (
     fromIndex < 0 ||
     toIndex < 0
@@ -1068,10 +1008,8 @@ function findNextDirectTrain(
 
   }
 
-
   let best =
     null;
-
 
   for (
     let i =
@@ -1084,7 +1022,6 @@ function findNextDirectTrain(
 
     const row =
       rows[i];
-
 
     if (
       !row ||
@@ -1099,7 +1036,6 @@ function findNextDirectTrain(
 
     }
 
-
     const depart =
       parseTime(
         row[fromIndex]
@@ -1110,7 +1046,6 @@ function findNextDirectTrain(
         row[toIndex]
       );
 
-
     if (
       depart === null ||
       arrive === null
@@ -1120,7 +1055,6 @@ function findNextDirectTrain(
 
     }
 
-
     if (
       arrive < depart
     ) {
@@ -1129,7 +1063,6 @@ function findNextDirectTrain(
 
     }
 
-
     if (
       depart < afterMinutes
     ) {
@@ -1137,7 +1070,6 @@ function findNextDirectTrain(
       continue;
 
     }
-
 
     if (
       !best ||
@@ -1157,7 +1089,6 @@ function findNextDirectTrain(
     }
 
   }
-
 
   return best;
 
@@ -1185,10 +1116,8 @@ function searchLineTrain(
     day === 0 ||
     day === 6;
 
-
   let rowsUp;
   let rowsDown;
-
 
   if (
     line === "karasuma"
@@ -1242,9 +1171,7 @@ function searchLineTrain(
 
   }
 
-
   const candidates = [];
-
 
   if (rowsUp) {
 
@@ -1269,7 +1196,6 @@ function searchLineTrain(
 
   }
 
-
   if (rowsDown) {
 
     const result =
@@ -1293,7 +1219,6 @@ function searchLineTrain(
 
   }
 
-
   if (
     candidates.length === 0
   ) {
@@ -1302,13 +1227,11 @@ function searchLineTrain(
 
   }
 
-
   candidates.sort(
     (a, b) =>
       a.depart -
       b.depart
   );
-
 
   return candidates[0];
 
@@ -1327,7 +1250,6 @@ function getRailDistance(
 
   let stations;
   let distances;
-
 
   if (
     line === "karasuma"
@@ -1349,7 +1271,6 @@ function getRailDistance(
 
   }
 
-
   const from =
     stations.indexOf(
       fromStation
@@ -1360,7 +1281,6 @@ function getRailDistance(
       toStation
     );
 
-
   if (
     from < 0 ||
     to < 0
@@ -1370,9 +1290,7 @@ function getRailDistance(
 
   }
 
-
   let distance = 0;
-
 
   const start =
     Math.min(
@@ -1386,7 +1304,6 @@ function getRailDistance(
       to
     );
 
-
   for (
     let i = start;
     i < end;
@@ -1397,7 +1314,6 @@ function getRailDistance(
       distances[i] || 0;
 
   }
-
 
   return distance;
 
@@ -1431,7 +1347,6 @@ function findTrainRoute(
 
   }
 
-
   const karasumaFrom =
     karasumaStations.includes(
       fromStation
@@ -1452,8 +1367,6 @@ function findTrainRoute(
       toStation
     );
 
-
-  // 同じ路線
   if (
     karasumaFrom &&
     karasumaTo
@@ -1466,7 +1379,6 @@ function findTrainRoute(
         toStation,
         afterMinutes
       );
-
 
     if (train) {
 
@@ -1493,7 +1405,6 @@ function findTrainRoute(
 
   }
 
-
   if (
     tozaiFrom &&
     tozaiTo
@@ -1506,7 +1417,6 @@ function findTrainRoute(
         toStation,
         afterMinutes
       );
-
 
     if (train) {
 
@@ -1533,7 +1443,6 @@ function findTrainRoute(
 
   }
 
-
   // 烏丸御池で乗換
   if (
     (
@@ -1556,7 +1465,6 @@ function findTrainRoute(
         ? "tozai"
         : "karasuma";
 
-
     const first =
       searchLineTrain(
         firstLine,
@@ -1565,13 +1473,11 @@ function findTrainRoute(
         afterMinutes
       );
 
-
     if (!first) {
 
       return null;
 
     }
-
 
     const second =
       searchLineTrain(
@@ -1581,13 +1487,11 @@ function findTrainRoute(
         first.arrive + 4
       );
 
-
     if (!second) {
 
       return null;
 
     }
-
 
     const distanceKm =
       getRailDistance(
@@ -1600,7 +1504,6 @@ function findTrainRoute(
         "烏丸御池",
         toStation
       );
-
 
     return {
 
@@ -1619,7 +1522,6 @@ function findTrainRoute(
     };
 
   }
-
 
   return null;
 
@@ -1663,7 +1565,6 @@ function displayTrainResult(
       "train-status"
     );
 
-
   if (!result) {
 
     lineElement.textContent =
@@ -1688,21 +1589,17 @@ function displayTrainResult(
 
   }
 
-
   const distanceKm =
     result.distanceKm;
-
 
   const co2 =
     distanceKm *
     TRAIN_CO2_PER_KM;
 
-
   const totalMinutes =
     result.totalMinutes +
     walkToMinutes +
     walkFromMinutes;
-
 
   if (
     result.type ===
@@ -1734,22 +1631,18 @@ function displayTrainResult(
 
   }
 
-
   timeElement.textContent =
     formatTime(
       totalMinutes
     );
 
-
   distanceElement.textContent =
     distanceKm.toFixed(1) +
     " km";
 
-
   co2Element.textContent =
     Math.round(co2) +
     " g";
-
 
   if (
     result.type ===
@@ -1757,7 +1650,7 @@ function displayTrainResult(
   ) {
 
     statusElement.textContent +=
-      `（${minutesToTime(result.first.depart)}発 → 烏丸御池 → ${minutesToTime(result.second.depart)}発）`;
+      `（${fromStation} → 烏丸御池 → ${toStation}）`;
 
   } else if (
     result.train
@@ -1767,7 +1660,6 @@ function displayTrainResult(
       `・${minutesToTime(result.train.depart)}発`;
 
   }
-
 
   statusElement.style.color =
     "#388e3c";
@@ -1791,7 +1683,6 @@ function searchTrain(
       "train-status"
     );
 
-
   if (
     Object.keys(trainData).length <
     8
@@ -1807,13 +1698,11 @@ function searchTrain(
 
   }
 
-
   const afterMinutes =
     getCurrentMinutes() +
     Math.round(
       walkToMinutes
     );
-
 
   const result =
     findTrainRoute(
@@ -1821,7 +1710,6 @@ function searchTrain(
       toStation,
       afterMinutes
     );
-
 
   displayTrainResult(
     result,
@@ -1835,6 +1723,272 @@ function searchTrain(
 
 
 // ============================================================
+// 🌱 ECOスコア・おすすめ
+// ============================================================
+
+function setEcoText(id, value) {
+
+  const el =
+    document.getElementById(id);
+
+  if (el) {
+    el.textContent = value;
+  }
+
+}
+
+function ecoScore(co2, maxCo2) {
+
+  if (!Number.isFinite(co2)) {
+    return null;
+  }
+
+  if (co2 <= 0) {
+    return 100;
+  }
+
+  return Math.max(
+    0,
+    Math.min(
+      100,
+      Math.round(
+        100 -
+        (co2 / maxCo2) * 80
+      )
+    )
+  );
+
+}
+
+function updateEcoDashboard(data) {
+
+  const maxCo2 =
+    Math.max(
+      data.carCo2 || 0,
+      data.trainCo2 || 0,
+      1
+    );
+
+  const trainScore =
+    ecoScore(
+      data.trainCo2,
+      maxCo2
+    );
+
+  const carScore =
+    ecoScore(
+      data.carCo2,
+      maxCo2
+    );
+
+  setEcoText(
+    "walk-score",
+    "ECOスコア 100"
+  );
+
+  setEcoText(
+    "bike-score",
+    "ECOスコア 100"
+  );
+
+  setEcoText(
+    "car-score",
+    "ECOスコア " +
+    carScore
+  );
+
+  setEcoText(
+    "train-score",
+    trainScore === null
+      ? "ECOスコア --"
+      : "ECOスコア " +
+        trainScore
+  );
+
+  const choices = [
+
+    {
+      name: "徒歩",
+      icon: "🚶",
+      co2: 0,
+      time: data.walkTime,
+      score: 100
+    },
+
+    {
+      name: "自転車",
+      icon: "🚲",
+      co2: 0,
+      time: data.bikeTime,
+      score: 100
+    }
+
+  ];
+
+  if (
+    Number.isFinite(
+      data.trainCo2
+    )
+  ) {
+
+    choices.push({
+
+      name: "電車",
+      icon: "🚃",
+      co2: data.trainCo2,
+      time: data.trainTime,
+      score: trainScore
+
+    });
+
+  }
+
+  choices.push({
+
+    name: "車",
+    icon: "🚗",
+    co2: data.carCo2,
+    time: data.carTime,
+    score: carScore
+
+  });
+
+  choices.sort(
+    (a, b) =>
+      (b.score - a.score) ||
+      (
+        (a.time || Infinity) -
+        (b.time || Infinity)
+      )
+  );
+
+  const best =
+    choices[0];
+
+  const saving =
+    Math.max(
+      0,
+      Math.round(
+        data.carCo2 -
+        best.co2
+      )
+    );
+
+  setEcoText(
+    "eco-score",
+    best.score +
+    " / 100"
+  );
+
+  setEcoText(
+    "eco-score-method",
+    best.icon +
+    " " +
+    best.name +
+    " を環境面からおすすめ"
+  );
+
+  setEcoText(
+    "eco-saving",
+    saving +
+    " g"
+  );
+
+  setEcoText(
+    "eco-recommendation",
+
+    best.icon +
+    " " +
+    best.name +
+    "がおすすめ！　ECOスコア：" +
+    best.score +
+    " / 100" +
+
+    (
+      saving > 0
+        ? "　🌱 車よりCO₂を約" +
+          saving +
+          "g削減"
+        : ""
+    )
+
+  );
+
+  if (
+    best.co2 === 0
+  ) {
+
+    setEcoText(
+      "eco-point",
+      "徒歩や自転車は、今回の計算では移動によるCO₂排出量を0gとして表示しています。"
+    );
+
+  } else if (
+    saving > 0
+  ) {
+
+    setEcoText(
+      "eco-point",
+      "車から別の移動手段に変えると、今回の計算ではCO₂排出量を減らせます。"
+    );
+
+  } else {
+
+    setEcoText(
+      "eco-point",
+      "時間とCO₂の両方を見ながら、自分に合う移動方法を選んでみよう！"
+    );
+
+  }
+
+}
+
+function resetEcoDashboard() {
+
+  setEcoText(
+    "eco-score",
+    "--"
+  );
+
+  setEcoText(
+    "eco-saving",
+    "--"
+  );
+
+  setEcoText(
+    "eco-score-method",
+    "検索後に表示"
+  );
+
+  setEcoText(
+    "eco-point",
+    "ルートを検索してみよう！"
+  );
+
+  setEcoText(
+    "eco-recommendation",
+    "ルートを検索すると、おすすめの移動方法がここに表示されます。"
+  );
+
+  [
+    "walk-score",
+    "bike-score",
+    "car-score",
+    "train-score"
+  ].forEach(
+    id =>
+      setEcoText(
+        id,
+        "ECOスコア --"
+      )
+  );
+
+}
+
+resetEcoDashboard();
+
+
+// ============================================================
 // 🔎 メイン検索
 // ============================================================
 
@@ -1845,18 +1999,15 @@ async function searchRoute() {
       "searchButton"
     );
 
-
   const startText =
     document.getElementById(
       "start"
     ).value.trim();
 
-
   const endText =
     document.getElementById(
       "end"
     ).value.trim();
-
 
   if (
     !startText ||
@@ -1871,13 +2022,11 @@ async function searchRoute() {
 
   }
 
-
   button.disabled =
     true;
 
   button.textContent =
     "検索中…";
-
 
   try {
 
@@ -1886,15 +2035,12 @@ async function searchRoute() {
         startText
       );
 
-
     const end =
       await geocode(
         endText
       );
 
-
     clearMapLayers();
-
 
     map.setView(
       [
@@ -1904,13 +2050,11 @@ async function searchRoute() {
       13
     );
 
-
     addMarker(
       start,
       "出発地：" +
       startText
     ).openPopup();
-
 
     addMarker(
       end,
@@ -1950,17 +2094,14 @@ async function searchRoute() {
 
       ]);
 
-
     const walkLine =
       L.geoJSON(
         walk.geometry
       ).addTo(map);
 
-
     routeLines.push(
       walkLine
     );
-
 
     document.getElementById(
       "walk-distance"
@@ -1969,7 +2110,6 @@ async function searchRoute() {
         walk.distance
       );
 
-
     document.getElementById(
       "bike-distance"
     ).textContent =
@@ -1977,14 +2117,12 @@ async function searchRoute() {
         bike.distance
       );
 
-
     document.getElementById(
       "car-distance"
     ).textContent =
       formatDistance(
         car.distance
       );
-
 
     document.getElementById(
       "walk-time"
@@ -1998,7 +2136,6 @@ async function searchRoute() {
         60
       );
 
-
     document.getElementById(
       "bike-time"
     ).textContent =
@@ -2011,7 +2148,6 @@ async function searchRoute() {
         60
       );
 
-
     document.getElementById(
       "car-time"
     ).textContent =
@@ -2023,7 +2159,6 @@ async function searchRoute() {
         50 *
         60
       );
-
 
     document.getElementById(
       "car-co2"
@@ -2047,12 +2182,10 @@ async function searchRoute() {
         start
       );
 
-
     const endStation =
       findNearestStation(
         end
       );
-
 
     if (
       !startStation ||
@@ -2065,13 +2198,11 @@ async function searchRoute() {
 
     }
 
-
     addMarker(
       startStation.point,
       "🚇 最寄り駅：" +
       startStation.name
     );
-
 
     addMarker(
       endStation.point,
@@ -2104,24 +2235,20 @@ async function searchRoute() {
 
       ]);
 
-
     const line1 =
       L.geoJSON(
         walkToStation.geometry
       ).addTo(map);
-
 
     const line2 =
       L.geoJSON(
         walkFromStation.geometry
       ).addTo(map);
 
-
     routeLines.push(
       line1,
       line2
     );
-
 
     const walkToMinutes =
       (
@@ -2130,7 +2257,6 @@ async function searchRoute() {
       ) /
       4.5 *
       60;
-
 
     const walkFromMinutes =
       (
@@ -2156,6 +2282,118 @@ async function searchRoute() {
       walkFromMinutes
 
     );
+
+
+    // --------------------------
+    // 🌱 ECOスコア更新
+    // --------------------------
+
+    const trainCo2Text =
+      document.getElementById(
+        "train-co2"
+      ).textContent;
+
+    const trainCo2Value =
+      parseFloat(
+        trainCo2Text
+      );
+
+    const trainTimeText =
+      document.getElementById(
+        "train-time"
+      ).textContent;
+
+    let trainTimeValue =
+      null;
+
+    if (
+      trainTimeText.includes(
+        "時間"
+      )
+    ) {
+
+      const parts =
+        trainTimeText.split(
+          "時間"
+        );
+
+      trainTimeValue =
+        (
+          parseInt(parts[0]) ||
+          0
+        ) *
+        60 +
+        (
+          parseInt(parts[1]) ||
+          0
+        );
+
+    } else if (
+      trainTimeText.includes(
+        "分"
+      )
+    ) {
+
+      trainTimeValue =
+        parseInt(
+          trainTimeText
+        ) || 0;
+
+    }
+
+    const carCo2Value =
+      Math.round(
+        (
+          car.distance /
+          1000
+        ) *
+        130
+      );
+
+    updateEcoDashboard({
+
+      carCo2:
+        carCo2Value,
+
+      carTime:
+        (
+          car.distance /
+          1000
+        ) /
+        50 *
+        60,
+
+      walkTime:
+        (
+          walk.distance /
+          1000
+        ) /
+        4.5 *
+        60,
+
+      bikeTime:
+        (
+          bike.distance /
+          1000
+        ) /
+        15 *
+        60,
+
+      trainCo2:
+        Number.isFinite(
+          trainCo2Value
+        )
+          ? trainCo2Value
+          : null,
+
+      trainTime:
+        Number.isFinite(
+          trainTimeValue
+        )
+          ? trainTimeValue
+          : null
+
+    });
 
 
     // --------------------------
@@ -2187,7 +2425,6 @@ async function searchRoute() {
 
       ]);
 
-
     map.fitBounds(
       bounds,
       {
@@ -2198,25 +2435,21 @@ async function searchRoute() {
       }
     );
 
-
   } catch (error) {
 
     console.error(
       error
     );
 
-
     alert(
       "ルート検索でエラーが発生しました。\n" +
       error.message
     );
 
-
     document.getElementById(
       "train-status"
     ).textContent =
       "検索に失敗しました";
-
 
   } finally {
 
