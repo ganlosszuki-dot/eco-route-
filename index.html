@@ -1,500 +1,1505 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
+
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
   <title>🌱 Eco Route</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
-  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css">
+
+  <!-- Leaflet -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
+
+
+  <!-- MapLibre -->
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.css"
+  >
+
 
   <style>
-    body{
-      margin:0;
-      font-family:sans-serif;
-      background:#f5fff5;
-      color:#333;
+
+    * {
+      box-sizing: border-box;
     }
 
-    header{
-      background:#4caf50;
-      color:#fff;
-      text-align:center;
-      padding:18px;
-      font-size:28px;
-      font-weight:bold;
+
+    body {
+
+      margin: 0;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        "Noto Sans JP",
+        sans-serif;
+
+      background:
+        linear-gradient(
+          180deg,
+          #f1fff4 0%,
+          #f7fbf8 45%,
+          #eef7f1 100%
+        );
+
+      color: #26352b;
+
     }
 
-    .search-box{
-      padding:15px;
-      background:#fff;
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      justify-content:center;
+
+    /* ========================================
+       ヘッダー
+    ======================================== */
+
+    header {
+
+      background:
+        linear-gradient(
+          135deg,
+          #2e8b57,
+          #43a047
+        );
+
+      color: white;
+
+      padding: 24px 20px 22px;
+
+      text-align: center;
+
+      box-shadow:
+        0 4px 15px
+        rgba(0,0,0,0.12);
+
     }
 
-    input{
-      padding:12px;
-      font-size:16px;
-      width:250px;
-      border:1px solid #ccc;
-      border-radius:8px;
+
+    .logo {
+
+      font-size: 30px;
+
+      font-weight: 800;
+
+      letter-spacing: 1px;
+
     }
 
-    button{
-      padding:12px 20px;
-      font-size:16px;
-      border:0;
-      border-radius:8px;
-      background:#4caf50;
-      color:#fff;
-      cursor:pointer;
+
+    .subtitle {
+
+      margin-top: 7px;
+
+      font-size: 14px;
+
+      opacity: 0.92;
+
     }
 
-    button:hover{
-      background:#388e3c;
+
+    /* ========================================
+       メイン
+    ======================================== */
+
+    .container {
+
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 20px;
+
     }
 
-    button:disabled{
-      background:#9e9e9e;
-      cursor:wait;
+
+    /* ========================================
+       検索ボックス
+    ======================================== */
+
+    .search-panel {
+
+      background: white;
+
+      border-radius: 20px;
+
+      padding: 22px;
+
+      margin-bottom: 20px;
+
+      box-shadow:
+        0 5px 20px
+        rgba(46,139,87,0.10);
+
+      border:
+        1px solid #e0eee4;
+
     }
 
-    #map{
-      height:450px;
-      width:100%;
-      background:#e8f5e9;
+
+    .search-title {
+
+      font-size: 20px;
+
+      font-weight: 700;
+
+      margin-bottom: 15px;
+
+      color: #245c3b;
+
     }
 
-    /* 🌱 ECOエリア */
-    .eco-dashboard{
-      padding:18px 20px 5px;
+
+    .search-box {
+
+      display: grid;
+
+      grid-template-columns:
+        1fr 1fr auto;
+
+      gap: 12px;
+
     }
 
-    .eco-hero{
-      background:linear-gradient(135deg,#e8f5e9,#f8fff8);
-      border:2px solid #a5d6a7;
-      border-radius:18px;
-      padding:20px;
-      box-shadow:0 3px 12px rgba(0,0,0,.08);
+
+    .input-wrapper {
+
+      position: relative;
+
     }
 
-    .eco-title{
-      font-size:26px;
-      font-weight:bold;
-      color:#2e7d32;
+
+    .input-icon {
+
+      position: absolute;
+
+      left: 14px;
+
+      top: 50%;
+
+      transform:
+        translateY(-50%);
+
+      font-size: 19px;
+
     }
 
-    .eco-subtitle{
-      margin-top:6px;
-      color:#55705a;
-      font-size:14px;
+
+    input {
+
+      width: 100%;
+
+      padding:
+        14px
+        14px
+        14px
+        44px;
+
+      font-size: 16px;
+
+      border:
+        2px solid #dce9df;
+
+      border-radius: 12px;
+
+      outline: none;
+
+      background: #fbfefc;
+
+      transition: 0.2s;
+
     }
 
-    .eco-recommendation{
-      margin-top:14px;
-      background:#fff;
-      border-radius:14px;
-      padding:16px;
-      font-size:18px;
-      font-weight:bold;
-      color:#2e7d32;
-      border-left:6px solid #4caf50;
+
+    input:focus {
+
+      border-color: #43a047;
+
+      background: white;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(67,160,71,0.10);
+
     }
 
-    .eco-stats{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
-      gap:12px;
-      margin-top:12px;
+
+    #searchButton {
+
+      border: none;
+
+      border-radius: 12px;
+
+      padding:
+        0 25px;
+
+      font-size: 16px;
+
+      font-weight: 700;
+
+      background:
+        linear-gradient(
+          135deg,
+          #43a047,
+          #2e7d32
+        );
+
+      color: white;
+
+      cursor: pointer;
+
+      box-shadow:
+        0 4px 10px
+        rgba(46,125,50,0.25);
+
+      transition: 0.2s;
+
     }
 
-    .eco-stat{
-      background:#fff;
-      border-radius:14px;
-      padding:15px;
-      box-shadow:0 2px 8px rgba(0,0,0,.07);
+
+    #searchButton:hover {
+
+      transform:
+        translateY(-1px);
+
+      box-shadow:
+        0 6px 14px
+        rgba(46,125,50,0.30);
+
     }
 
-    .eco-stat-label{
-      font-size:14px;
-      color:#55705a;
-      font-weight:bold;
+
+    #searchButton:disabled {
+
+      opacity: 0.65;
+
+      cursor: wait;
+
+      transform: none;
+
     }
 
-    .eco-stat-value{
-      font-size:28px;
-      font-weight:bold;
-      color:#2e7d32;
-      margin-top:5px;
+
+    /* ========================================
+       地図
+    ======================================== */
+
+    .map-panel {
+
+      background: white;
+
+      padding: 10px;
+
+      border-radius: 20px;
+
+      box-shadow:
+        0 5px 20px
+        rgba(0,0,0,0.08);
+
+      overflow: hidden;
+
+      margin-bottom: 22px;
+
     }
 
-    .eco-stat-small{
-      font-size:12px;
-      color:#777;
-      margin-top:3px;
+
+    .map-title {
+
+      padding:
+        8px
+        12px
+        12px;
+
+      font-size: 18px;
+
+      font-weight: 700;
+
+      color: #245c3b;
+
     }
 
-    .eco-point{
-      margin-top:8px;
-      font-size:15px;
-      line-height:1.6;
-      color:#444;
+
+    #map {
+
+      width: 100%;
+
+      height: 480px;
+
+      border-radius: 14px;
+
+      overflow: hidden;
+
     }
 
-    .cards{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-      gap:15px;
-      padding:20px;
+
+    /* ========================================
+       エコおすすめ
+    ======================================== */
+
+    .eco-recommendation {
+
+      background:
+        linear-gradient(
+          135deg,
+          #e7f8eb,
+          #f7fff8
+        );
+
+      border:
+        1px solid #bfe5c8;
+
+      border-radius: 18px;
+
+      padding: 18px 20px;
+
+      margin-bottom: 22px;
+
+      box-shadow:
+        0 4px 15px
+        rgba(46,139,87,0.08);
+
     }
 
-    .card{
-      background:#fff;
-      border-radius:15px;
-      padding:20px;
-      text-align:center;
-      box-shadow:0 3px 10px rgba(0,0,0,.1);
+
+    .eco-title {
+
+      font-size: 18px;
+
+      font-weight: 800;
+
+      color: #26733f;
+
+      margin-bottom: 6px;
+
     }
 
-    .icon{
-      font-size:40px;
+
+    .eco-message {
+
+      font-size: 15px;
+
+      line-height: 1.6;
+
     }
 
-    .card h3{
-      margin:10px 0;
-      font-size:22px;
+
+    /* ========================================
+       ルートカード
+    ======================================== */
+
+    .section-title {
+
+      font-size: 22px;
+
+      font-weight: 800;
+
+      margin:
+        10px
+        0
+        14px;
+
+      color: #234d32;
+
     }
 
-    .info{
-      margin:10px 0;
-      color:#555;
+
+    .cards {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(190px, 1fr)
+        );
+
+      gap: 15px;
+
+      margin-bottom: 22px;
+
     }
 
-    .big-number{
-      font-size:22px;
-      font-weight:bold;
-      margin-top:4px;
+
+    .card {
+
+      position: relative;
+
+      background: white;
+
+      border-radius: 18px;
+
+      padding: 20px;
+
+      box-shadow:
+        0 4px 15px
+        rgba(0,0,0,0.07);
+
+      border:
+        2px solid transparent;
+
+      transition:
+        transform 0.2s,
+        box-shadow 0.2s;
+
+      overflow: hidden;
+
     }
 
-    .co2{
-      margin-top:15px;
-      color:#388e3c;
-      font-weight:bold;
+
+    .card:hover {
+
+      transform:
+        translateY(-3px);
+
+      box-shadow:
+        0 8px 20px
+        rgba(0,0,0,0.10);
+
     }
 
-    .co2-number{
-      font-size:20px;
-      margin-top:4px;
+
+    .card.best {
+
+      border-color: #4caf50;
+
+      box-shadow:
+        0 5px 18px
+        rgba(76,175,80,0.18);
+
     }
 
-    .mode-score{
-      margin-top:12px;
-      font-weight:bold;
-      color:#2e7d32;
+
+    .best-label {
+
+      position: absolute;
+
+      top: 0;
+
+      right: 0;
+
+      background: #4caf50;
+
+      color: white;
+
+      padding:
+        5px
+        10px;
+
+      border-radius:
+        0
+        0
+        0
+        10px;
+
+      font-size: 12px;
+
+      font-weight: 700;
+
     }
 
-    .train-status{
-      margin-top:10px;
-      font-size:13px;
-      color:#666;
-      line-height:1.5;
+
+    .icon {
+
+      font-size: 38px;
+
+      margin-bottom: 5px;
+
     }
 
-    .note{
-      margin:10px 20px 30px;
-      padding:15px;
-      background:#f0f0f0;
-      border-radius:10px;
-      font-size:14px;
-      color:#555;
-      line-height:1.7;
+
+    h3 {
+
+      margin:
+        5px
+        0
+        16px;
+
+      font-size: 20px;
+
     }
+
+
+    .route-label {
+
+      display: inline-block;
+
+      background: #eef7f0;
+
+      color: #39734a;
+
+      padding:
+        4px
+        8px;
+
+      border-radius: 7px;
+
+      font-size: 12px;
+
+      margin-bottom: 10px;
+
+    }
+
+
+    .info {
+
+      color: #66736a;
+
+      font-size: 13px;
+
+      margin:
+        9px
+        0;
+
+    }
+
+
+    .big-number {
+
+      color: #26352b;
+
+      font-size: 20px;
+
+      font-weight: 750;
+
+      margin-top: 2px;
+
+    }
+
+
+    .co2 {
+
+      margin-top: 15px;
+
+      padding-top: 13px;
+
+      border-top:
+        1px solid #edf1ee;
+
+      color: #388e3c;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+    }
+
+
+    .co2-number {
+
+      font-size: 21px;
+
+      margin-top: 3px;
+
+    }
+
+
+    .train-status {
+
+      margin-top: 10px;
+
+      padding:
+        8px
+        10px;
+
+      background: #f7faf8;
+
+      border-radius: 8px;
+
+      font-size: 12px;
+
+      line-height: 1.5;
+
+      color: #657169;
+
+    }
+
+
+    /* ========================================
+       環境スコア
+    ======================================== */
+
+    .eco-dashboard {
+
+      background: white;
+
+      border-radius: 20px;
+
+      padding: 20px;
+
+      margin-bottom: 22px;
+
+      box-shadow:
+        0 5px 20px
+        rgba(0,0,0,0.07);
+
+    }
+
+
+    .score-grid {
+
+      display: grid;
+
+      grid-template-columns:
+        repeat(
+          auto-fit,
+          minmax(140px, 1fr)
+        );
+
+      gap: 12px;
+
+    }
+
+
+    .score-item {
+
+      background: #f5faf6;
+
+      border-radius: 14px;
+
+      padding: 15px;
+
+      text-align: center;
+
+    }
+
+
+    .score-icon {
+
+      font-size: 25px;
+
+    }
+
+
+    .score-name {
+
+      margin-top: 5px;
+
+      font-size: 13px;
+
+      color: #657169;
+
+    }
+
+
+    .score-value {
+
+      margin-top: 5px;
+
+      font-size: 24px;
+
+      font-weight: 800;
+
+      color: #2e7d32;
+
+    }
+
+
+    /* ========================================
+       注記
+    ======================================== */
+
+    .note {
+
+      background: #f1f4f2;
+
+      border-radius: 14px;
+
+      padding: 17px 20px;
+
+      margin-bottom: 25px;
+
+      font-size: 13px;
+
+      color: #5d6861;
+
+      line-height: 1.8;
+
+    }
+
+
+    .note strong {
+
+      color: #36513f;
+
+    }
+
+
+    /* ========================================
+       フッター
+    ======================================== */
+
+    footer {
+
+      text-align: center;
+
+      padding:
+        25px
+        15px;
+
+      color: #718078;
+
+      font-size: 12px;
+
+    }
+
+
+    /* ========================================
+       スマホ・小さい画面
+    ======================================== */
+
+    @media (
+      max-width: 750px
+    ) {
+
+      .container {
+
+        padding: 12px;
+
+      }
+
+
+      .search-box {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      #searchButton {
+
+        min-height: 50px;
+
+      }
+
+
+      #map {
+
+        height: 380px;
+
+      }
+
+
+      .cards {
+
+        grid-template-columns:
+          repeat(
+            2,
+            minmax(0,1fr)
+          );
+
+        gap: 10px;
+
+      }
+
+
+      .card {
+
+        padding: 15px;
+
+      }
+
+
+      .icon {
+
+        font-size: 32px;
+
+      }
+
+
+      h3 {
+
+        font-size: 17px;
+
+      }
+
+
+      .big-number {
+
+        font-size: 17px;
+
+      }
+
+    }
+
+
+    @media (
+      max-width: 450px
+    ) {
+
+      .cards {
+
+        grid-template-columns: 1fr;
+
+      }
+
+
+      .logo {
+
+        font-size: 25px;
+
+      }
+
+
+      #map {
+
+        height: 330px;
+
+      }
+
+    }
+
   </style>
+
 </head>
+
 
 <body>
 
-<header>🌱 Eco Route</header>
 
-<div class="search-box">
-  <input id="start" type="text" placeholder="出発地（例：京都駅）">
-  <input id="end" type="text" placeholder="目的地（例：金閣寺）">
-  <button id="searchButton" onclick="searchRoute()">ルート検索</button>
-</div>
+<!-- ========================================
+     ヘッダー
+======================================== -->
 
-<!-- 🌱 ECOおすすめ -->
-<section class="eco-dashboard">
+<header>
 
-  <div class="eco-hero">
+  <div class="logo">
+    🌱 Eco Route
+  </div>
+
+  <div class="subtitle">
+    環境にやさしい移動ルートを比較しよう
+  </div>
+
+</header>
+
+
+
+<div class="container">
+
+
+  <!-- ======================================
+       検索
+  ======================================= -->
+
+  <section class="search-panel">
+
+    <div class="search-title">
+      🔎 ルートを検索
+    </div>
+
+
+    <div class="search-box">
+
+
+      <div class="input-wrapper">
+
+        <span class="input-icon">
+          📍
+        </span>
+
+        <input
+          id="start"
+          type="text"
+          placeholder="出発地を入力"
+        >
+
+      </div>
+
+
+      <div class="input-wrapper">
+
+        <span class="input-icon">
+          🏁
+        </span>
+
+        <input
+          id="end"
+          type="text"
+          placeholder="目的地を入力"
+        >
+
+      </div>
+
+
+      <button
+        id="searchButton"
+        onclick="searchRoute()"
+      >
+        ルート検索
+      </button>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- ======================================
+       地図
+  ======================================= -->
+
+  <section class="map-panel">
+
+    <div class="map-title">
+      🗺️ ルートマップ
+    </div>
+
+    <div id="map"></div>
+
+  </section>
+
+
+
+  <!-- ======================================
+       エコおすすめ
+  ======================================= -->
+
+  <section
+    class="eco-recommendation"
+    id="eco-recommendation"
+  >
 
     <div class="eco-title">
-      🌱 ECOおすすめ
+      🌿 Eco Route おすすめ
     </div>
 
-    <div class="eco-subtitle">
-      環境への負担と移動時間を比べて、自分に合う移動方法を選べます。
+    <div
+      class="eco-message"
+      id="eco-message"
+    >
+      出発地と目的地を入力すると、
+      環境への負荷を比較できます。
     </div>
 
-    <div class="eco-recommendation" id="eco-recommendation">
-      ルートを検索すると、おすすめの移動方法がここに表示されます。
-    </div>
+  </section>
 
-  </div>
 
-  <div class="eco-stats">
 
-    <div class="eco-stat">
-      <div class="eco-stat-label">
-        🏆 ECOスコア
-      </div>
+  <!-- ======================================
+       ルート比較
+  ======================================= -->
 
-      <div class="eco-stat-value" id="eco-score">
-        --
-      </div>
-
-      <div class="eco-stat-small" id="eco-score-method">
-        検索後に表示
-      </div>
-    </div>
-
-    <div class="eco-stat">
-      <div class="eco-stat-label">
-        🌍 CO₂削減量
-      </div>
-
-      <div class="eco-stat-value" id="eco-saving">
-        --
-      </div>
-
-      <div class="eco-stat-small">
-        車と比べた場合
-      </div>
-    </div>
-
-    <div class="eco-stat">
-      <div class="eco-stat-label">
-        💡 エコポイント
-      </div>
-
-      <div class="eco-point" id="eco-point">
-        ルートを検索してみよう！
-      </div>
-    </div>
-
-  </div>
-
-</section>
-
-<div id="map"></div>
-
-<!-- 🚶🚲🚗🚃🚌 -->
-<div class="cards">
-
-  <div class="card">
-
-    <div class="icon">🚶</div>
-
-    <h3>徒歩</h3>
-
-    <div class="info">
-      距離
-      <div class="big-number" id="walk-distance">
-        --
-      </div>
-    </div>
-
-    <div class="info">
-      時間
-      <div class="big-number" id="walk-time">
-        --
-      </div>
-    </div>
-
-    <div class="co2">
-      🌱 CO₂
-      <div class="co2-number">
-        0 g
-      </div>
-    </div>
-
-    <div class="mode-score" id="walk-score">
-      ECOスコア --
-    </div>
-
+  <div class="section-title">
+    🚀 移動方法を比較
   </div>
 
 
-  <div class="card">
+  <section class="cards">
 
-    <div class="icon">🚲</div>
 
-    <h3>自転車</h3>
+    <!-- 徒歩 -->
 
-    <div class="info">
-      距離
-      <div class="big-number" id="bike-distance">
-        --
+    <div
+      class="card best"
+      id="walk-card"
+    >
+
+      <div class="best-label">
+        エコ
       </div>
-    </div>
 
-    <div class="info">
-      時間
-      <div class="big-number" id="bike-time">
-        --
+      <div class="icon">
+        🚶
       </div>
-    </div>
 
-    <div class="co2">
-      🌱 CO₂
-      <div class="co2-number">
-        0 g
+      <h3>
+        徒歩
+      </h3>
+
+      <div class="route-label">
+        CO₂ ほぼゼロ
       </div>
+
+      <div class="info">
+        距離
+
+        <div
+          class="big-number"
+          id="walk-distance"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="info">
+        時間
+
+        <div
+          class="big-number"
+          id="walk-time"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="co2">
+        🌱 CO₂
+
+        <div class="co2-number">
+          0 g
+        </div>
+
+      </div>
+
     </div>
 
-    <div class="mode-score" id="bike-score">
-      ECOスコア --
+
+
+    <!-- 自転車 -->
+
+    <div
+      class="card"
+      id="bike-card"
+    >
+
+      <div class="icon">
+        🚲
+      </div>
+
+      <h3>
+        自転車
+      </h3>
+
+      <div class="route-label">
+        低CO₂
+      </div>
+
+      <div class="info">
+        距離
+
+        <div
+          class="big-number"
+          id="bike-distance"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="info">
+        時間
+
+        <div
+          class="big-number"
+          id="bike-time"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="co2">
+        🌱 CO₂
+
+        <div class="co2-number">
+          0 g
+        </div>
+
+      </div>
+
     </div>
+
+
+
+    <!-- 車 -->
+
+    <div
+      class="card"
+      id="car-card"
+    >
+
+      <div class="icon">
+        🚗
+      </div>
+
+      <h3>
+        車
+      </h3>
+
+      <div class="route-label">
+        時速50km換算
+      </div>
+
+      <div class="info">
+        距離
+
+        <div
+          class="big-number"
+          id="car-distance"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="info">
+        時間
+
+        <div
+          class="big-number"
+          id="car-time"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="co2">
+        🌱 CO₂
+
+        <div
+          class="co2-number"
+          id="car-co2"
+        >
+          --
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <!-- 地下鉄 -->
+
+    <div
+      class="card"
+      id="train-card"
+    >
+
+      <div class="icon">
+        🚇
+      </div>
+
+      <h3>
+        地下鉄
+      </h3>
+
+      <div class="route-label">
+        京都市営地下鉄
+      </div>
+
+      <div class="info">
+        路線
+
+        <div
+          class="big-number"
+          id="train-line"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="info">
+        時間
+
+        <div
+          class="big-number"
+          id="train-time"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="info">
+        距離
+
+        <div
+          class="big-number"
+          id="train-distance"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="co2">
+        🌱 CO₂
+
+        <div
+          class="co2-number"
+          id="train-co2"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div
+        class="train-status"
+        id="train-status"
+      >
+        電車データを読み込み中です…
+      </div>
+
+    </div>
+
+
+
+    <!-- バス -->
+
+    <div
+      class="card"
+      id="bus-card"
+    >
+
+      <div class="icon">
+        🚌
+      </div>
+
+      <h3>
+        バス
+      </h3>
+
+      <div class="route-label">
+        今後追加予定
+      </div>
+
+      <div class="info">
+        路線
+
+        <div
+          class="big-number"
+          id="bus-line"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="info">
+        時間
+
+        <div
+          class="big-number"
+          id="bus-time"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="co2">
+        🌱 CO₂
+
+        <div
+          class="co2-number"
+          id="bus-co2"
+        >
+          --
+        </div>
+
+      </div>
+
+      <div class="train-status">
+        バス機能はこれから追加します
+      </div>
+
+    </div>
+
+
+  </section>
+
+
+
+  <!-- ======================================
+       環境スコア
+  ======================================= -->
+
+  <section
+    class="eco-dashboard"
+    id="eco-dashboard"
+  >
+
+    <div class="section-title">
+      🌱 環境比較
+    </div>
+
+
+    <div class="score-grid">
+
+
+      <div class="score-item">
+
+        <div class="score-icon">
+          🚶
+        </div>
+
+        <div class="score-name">
+          徒歩
+        </div>
+
+        <div
+          class="score-value"
+          id="walk-score"
+        >
+          --
+        </div>
+
+      </div>
+
+
+
+      <div class="score-item">
+
+        <div class="score-icon">
+          🚲
+        </div>
+
+        <div class="score-name">
+          自転車
+        </div>
+
+        <div
+          class="score-value"
+          id="bike-score"
+        >
+          --
+        </div>
+
+      </div>
+
+
+
+      <div class="score-item">
+
+        <div class="score-icon">
+          🚗
+        </div>
+
+        <div class="score-name">
+          車
+        </div>
+
+        <div
+          class="score-value"
+          id="car-score"
+        >
+          --
+        </div>
+
+      </div>
+
+
+
+      <div class="score-item">
+
+        <div class="score-icon">
+          🚇
+        </div>
+
+        <div class="score-name">
+          地下鉄
+        </div>
+
+        <div
+          class="score-value"
+          id="train-score"
+        >
+          --
+        </div>
+
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- ======================================
+       注記
+  ======================================= -->
+
+  <div class="note">
+
+    <strong>📌 このサイトについて</strong>
+
+    <br>
+
+    徒歩・自転車・車のルートは
+    地図上のルート情報を利用しています。
+
+    <br>
+
+    車の所要時間は
+    <strong>時速50km</strong>
+    と仮定して計算しています。
+
+    <br>
+
+    実際の所要時間は道路状況や
+    交通状況によって変わります。
+
+    <br>
+
+    地下鉄の時刻表は
+    京都市営地下鉄のCSVデータを利用しています。
 
   </div>
 
-
-  <div class="card">
-
-    <div class="icon">🚗</div>
-
-    <h3>車</h3>
-
-    <div class="info">
-      距離
-      <div class="big-number" id="car-distance">
-        --
-      </div>
-    </div>
-
-    <div class="info">
-      時間
-      <div class="big-number" id="car-time">
-        --
-      </div>
-    </div>
-
-    <div class="co2">
-      💨 CO₂
-      <div class="co2-number" id="car-co2">
-        --
-      </div>
-    </div>
-
-    <div class="mode-score" id="car-score">
-      ECOスコア --
-    </div>
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="icon">🚃</div>
-
-    <h3>電車</h3>
-
-    <div class="info">
-      区間
-      <div class="big-number" id="train-line">
-        --
-      </div>
-    </div>
-
-    <div class="info">
-      時間
-      <div class="big-number" id="train-time">
-        --
-      </div>
-    </div>
-
-    <div class="info">
-      距離
-      <div class="big-number" id="train-distance">
-        --
-      </div>
-    </div>
-
-    <div class="co2">
-      🌱 CO₂
-      <div class="co2-number" id="train-co2">
-        --
-      </div>
-    </div>
-
-    <div class="mode-score" id="train-score">
-      ECOスコア --
-    </div>
-
-    <div class="train-status" id="train-status">
-      電車データを読み込み中...
-    </div>
-
-  </div>
-
-
-  <div class="card">
-
-    <div class="icon">🚌</div>
-
-    <h3>バス</h3>
-
-    <div class="info">
-      距離
-      <div class="big-number">--</div>
-    </div>
-
-    <div class="info">
-      時間
-      <div class="big-number">--</div>
-    </div>
-
-    <div class="co2">
-      🌱 CO₂
-      <div class="co2-number">--</div>
-    </div>
-
-    <div class="train-status">
-      現在は準備中
-    </div>
-
-  </div>
 
 </div>
 
 
-<div class="note">
 
-  <strong>注記</strong><br>
+<footer>
 
-  ・地図はOpenFreeMap（OpenStreetMapデータ）を使用しています。<br>
+  🌱 Eco Route
 
-  ・車の所要時間は時速50kmとして計算しています。<br>
+  <br>
 
-  ・車のCO₂排出量は130g/kmとして計算しています。<br>
+  環境にやさしい移動を考えるルート比較サイト
 
-  ・電車のCO₂排出量は20g/人kmとして計算しています。<br>
-
-  ・電車の駅間距離は、このページに登録した地下鉄駅間距離を使った概算です。<br>
-
-  ・検索結果は外部の地図・ルートサービスの状況によって変わることがあります。
-
-</div>
+</footer>
 
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<script src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js"></script>
+<!-- ========================================
+     JavaScript
+======================================== -->
 
-<script src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js"></script>
+
+<!-- Leaflet -->
+
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js">
+</script>
+
+
+<!-- MapLibre -->
+
+<script
+  src="https://unpkg.com/maplibre-gl@5/dist/maplibre-gl.js">
+</script>
+
+
+<!-- MapLibre GL Leaflet -->
+
+<script
+  src="https://unpkg.com/@maplibre/maplibre-gl-leaflet/leaflet-maplibre-gl.js">
+</script>
+
+
+<!-- 自分のJavaScript -->
 
 <script src="script.js"></script>
 
+
 </body>
+
 </html>
