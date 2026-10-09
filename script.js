@@ -128,6 +128,9 @@ const tozaiDistances = [
 
 const TRAIN_CO2_PER_KM = 20;
 
+// 最寄りのJR駅がこの距離(m)より遠いときは、JRを候補にしない
+const JR_MAX_STATION_DISTANCE = 3000;
+
 
 // ============================================================
 // 🚇 地下鉄駅座標
@@ -1061,6 +1064,81 @@ function calculateJRDistance(fromName, toName) {
 
 
 // ============================================================
+// 🚃 JRの線を地図に描く
+// ============================================================
+
+// 乗る駅から降りる駅までの、駅の座標を順番に返す
+function getJRStationPath(fromName, toName) {
+
+  const fromIndex = jrStations.findIndex(s => s.name === fromName);
+  const toIndex = jrStations.findIndex(s => s.name === toName);
+
+  if (fromIndex < 0 || toIndex < 0) {
+
+    return [];
+
+  }
+
+  const start = Math.min(fromIndex, toIndex);
+  const end = Math.max(fromIndex, toIndex);
+
+  const path = jrStations
+    .slice(start, end + 1)
+    .map(s => [s.lat, s.lon]);
+
+  // 乗る駅 → 降りる駅の向きにそろえる
+  return fromIndex <= toIndex
+    ? path
+    : path.reverse();
+}
+
+
+function drawJRLine(start, end, startJR, endJR) {
+
+  const path = getJRStationPath(startJR.name, endJR.name);
+
+  if (path.length < 2) {
+    return;
+  }
+
+  // JRの線 (青の実線)
+  const railLine = L.polyline(path, {
+    color: "#1d62b0",
+    weight: 5,
+    opacity: 0.9
+  }).addTo(map);
+
+  // 出発地 → 乗る駅 (青の点線)
+  const walkToStation = L.polyline(
+    [
+      [start.lat, start.lon],
+      [startJR.point.lat, startJR.point.lon]
+    ],
+    {
+      color: "#1d62b0",
+      weight: 3,
+      dashArray: "4 8"
+    }
+  ).addTo(map);
+
+  // 降りる駅 → 目的地 (青の点線)
+  const walkFromStation = L.polyline(
+    [
+      [endJR.point.lat, endJR.point.lon],
+      [end.lat, end.lon]
+    ],
+    {
+      color: "#1d62b0",
+      weight: 3,
+      dashArray: "4 8"
+    }
+  ).addTo(map);
+
+  routeLines.push(railLine, walkToStation, walkFromStation);
+}
+
+
+// ============================================================
 // 🚃 JR所要時間
 // ============================================================
 
@@ -1321,7 +1399,12 @@ async function searchRoute() {
       getRoute(start, end, "driving")
     ]);
 
-    const walkLine = L.geoJSON(walk.geometry).addTo(map);
+    const walkLine = L.geoJSON(walk.geometry, {
+      style: {
+        color: "#4a8f3c",
+        weight: 5
+      }
+    }).addTo(map);
 
     routeLines.push(walkLine);
 
@@ -1368,22 +1451,41 @@ async function searchRoute() {
 
     let jrResult = null;
 
-    if (startJR && endJR && startJR.name !== endJR.name) {
+    // 最寄りのJR駅が遠すぎる場合は、JRを候補にしない
+    const jrUseful =
+      startJR &&
+      endJR &&
+      startJR.distance <= JR_MAX_STATION_DISTANCE &&
+      endJR.distance <= JR_MAX_STATION_DISTANCE;
+
+    if (!jrUseful) {
+
+      resetJRCard(
+        "最寄りのJR駅が遠い(" +
+        (JR_MAX_STATION_DISTANCE / 1000) +
+        "km以上)ため、JRは候補外です"
+      );
+
+    } else if (startJR.name === endJR.name) {
+
+      resetJRCard("出発地と目的地の最寄りJR駅が同じです");
+
+    } else {
 
       addMarker(startJR.point, "🚃 JR最寄り駅：" + startJR.name);
       addMarker(endJR.point, "🚃 JR最寄り駅：" + endJR.name);
 
       jrResult = displayJRResult(startJR, endJR, start, end);
 
-      if (!jrResult) {
+      if (jrResult) {
+
+        drawJRLine(start, end, startJR, endJR);
+
+      } else {
 
         resetJRCard("JRの距離を計算できませんでした");
 
       }
-
-    } else {
-
-      resetJRCard("JRで移動できる区間がありません");
 
     }
 
@@ -1454,14 +1556,10 @@ async function searchRoute() {
       [end.lat, end.lon]
     ];
 
-    if (startJR) {
+    // JRを使うときだけ、JR駅も表示範囲に入れる
+    if (jrResult) {
 
       points.push([startJR.point.lat, startJR.point.lon]);
-
-    }
-
-    if (endJR) {
-
       points.push([endJR.point.lat, endJR.point.lon]);
 
     }
