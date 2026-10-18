@@ -131,6 +131,10 @@ const TRAIN_CO2_PER_KM = 20;
 // 最寄りのJR駅がこの距離(m)より遠いときは、JRを候補にしない
 const JR_MAX_STATION_DISTANCE = 3000;
 
+// 「おすすめ」に選ぶときの、現実的な所要時間の上限(分)
+const WALK_MAX_MINUTES = 30;
+const BIKE_MAX_MINUTES = 40;
+
 
 // ============================================================
 // 🚇 地下鉄駅座標
@@ -994,7 +998,10 @@ function displaySubwayResult(result, walkToMinutes, walkFromMinutes) {
 
   status.style.color = "#388e3c";
 
-  return emission;
+  return {
+    co2: emission,
+    minutes: total
+  };
 }
 
 
@@ -1250,6 +1257,135 @@ function calculateEcoScore(co2) {
 
 
 // ============================================================
+// 🌱 おすすめの選び方
+// ============================================================
+//
+// 1. 徒歩・自転車・電車のうち、現実的に使えるものだけを候補にする
+//    (徒歩は30分まで、自転車は40分まで)
+// 2. その中でCO₂が一番少ないものを選ぶ
+//    (CO₂が同じなら 徒歩 → 自転車 → 地下鉄 → JR の順)
+// 3. 候補がなければ、車の場合のCO₂を伝える
+
+const RECOMMEND_PRIORITY = ["walk", "bike", "subway", "jr"];
+
+function buildRecommendation(candidates) {
+
+  const car = candidates.find(c => c.key === "car");
+
+  const options = candidates
+    .filter(c => c.key !== "car" && c.practical)
+    .sort((a, b) => {
+
+      const diff = Math.round(a.co2) - Math.round(b.co2);
+
+      if (diff !== 0) {
+        return diff;
+      }
+
+      return (
+        RECOMMEND_PRIORITY.indexOf(a.key) -
+        RECOMMEND_PRIORITY.indexOf(b.key)
+      );
+
+    });
+
+  if (!options.length) {
+
+    return {
+      bestKey: null,
+      message:
+        "徒歩や自転車では遠く、使える電車も見つかりませんでした。" +
+        (
+          car
+            ? "車だと約" + Math.round(car.co2) + " gのCO₂が出ます。"
+            : ""
+        )
+    };
+
+  }
+
+  const best = options[0];
+
+  let message =
+    "🌱 " +
+    best.name +
+    "（約" +
+    formatTime(best.minutes) +
+    "）がおすすめです。";
+
+  message +=
+    best.co2 <= 0
+      ? "CO₂は0 gです。"
+      : "CO₂は約" + Math.round(best.co2) + " gです。";
+
+  if (car) {
+
+    const saved = Math.round(car.co2 - best.co2);
+
+    if (saved > 0) {
+
+      message += "車より約" + saved + " g少なくなります。";
+
+    }
+
+  }
+
+  return {
+    bestKey: best.key,
+    message
+  };
+}
+
+
+// ============================================================
+// 🏷️ おすすめの行に印をつける
+// ============================================================
+
+function markBestCard(key) {
+
+  document.querySelectorAll(".mode.best").forEach(el => {
+    el.classList.remove("best");
+  });
+
+  document.querySelectorAll(".best-label").forEach(el => {
+    el.remove();
+  });
+
+  if (!key) {
+    return;
+  }
+
+  const ids = {
+    walk: "walk-card",
+    bike: "bike-card",
+    subway: "train-card",
+    jr: "jr-card"
+  };
+
+  const card = document.getElementById(ids[key]);
+
+  if (!card) {
+    return;
+  }
+
+  card.classList.add("best");
+
+  const title = card.querySelector("h3");
+
+  if (title) {
+
+    const label = document.createElement("span");
+
+    label.className = "best-label";
+    label.textContent = "おすすめ";
+
+    title.appendChild(label);
+
+  }
+}
+
+
+// ============================================================
 // 🌱 ECO表示 (地下鉄とJRを別々に表示)
 // ============================================================
 
@@ -1258,7 +1394,8 @@ function updateEcoDashboard(
   bikeCo2,
   carCo2,
   subwayCo2,
-  jrCo2
+  jrCo2,
+  candidates
 ) {
 
   const hasValue = v =>
@@ -1294,25 +1431,17 @@ function updateEcoDashboard(
 
   });
 
+  const recommendation = buildRecommendation(candidates);
+
   const message = document.getElementById("eco-message");
 
-  if (!message) {
-    return;
+  if (message) {
+
+    message.textContent = recommendation.message;
+
   }
 
-  // 車は「おすすめ」の候補に入れず、徒歩・自転車・鉄道から選ぶ
-  const options = items
-    .filter(item => item.id !== "car-score" && item.score !== null)
-    .sort((a, b) => b.score - a.score);
-
-  if (!options.length) {
-    return;
-  }
-
-  message.textContent =
-    "🌱 CO₂排出量を基準にすると " +
-    options[0].name +
-    " が最もエコです";
+  markBestCard(recommendation.bestKey);
 
 }
 
@@ -1346,6 +1475,8 @@ function resetEcoDashboard() {
     message.textContent = "ルートを検索するとエコ度を表示します";
 
   }
+
+  markBestCard(null);
 }
 
 
@@ -1498,6 +1629,7 @@ async function searchRoute() {
     const endSubway = findNearestStation(end);
 
     let subwayCo2 = null;
+    let subwayMinutes = null;
 
     // 地下鉄駅まで遠すぎる場合は、
     // 長距離移動の主役として扱わない
@@ -1523,7 +1655,16 @@ async function searchRoute() {
 
       if (subwayResult) {
 
-        subwayCo2 = displaySubwayResult(subwayResult, walkTo, walkFrom);
+        const subwayInfo = displaySubwayResult(subwayResult, walkTo, walkFrom);
+
+        subwayCo2 = subwayInfo.co2;
+
+        // 出発と到着の最寄り駅が同じときは、地下鉄に乗らないので候補にしない
+        if (subwayResult.type !== "same") {
+
+          subwayMinutes = subwayInfo.minutes;
+
+        }
 
       } else {
 
@@ -1573,12 +1714,65 @@ async function searchRoute() {
     // 🌱 ECO (地下鉄とJRを別々に渡す)
     // ========================================================
 
+    const candidates = [
+
+      {
+        key: "walk",
+        name: "徒歩",
+        co2: walkCo2,
+        minutes: walkMinutes,
+        practical: walkMinutes <= WALK_MAX_MINUTES
+      },
+
+      {
+        key: "bike",
+        name: "自転車",
+        co2: bikeCo2,
+        minutes: bikeMinutes,
+        practical: bikeMinutes <= BIKE_MAX_MINUTES
+      },
+
+      {
+        key: "car",
+        name: "車",
+        co2: carCo2,
+        minutes: carMinutes,
+        practical: true
+      }
+
+    ];
+
+    if (subwayMinutes !== null) {
+
+      candidates.push({
+        key: "subway",
+        name: "地下鉄",
+        co2: subwayCo2,
+        minutes: subwayMinutes,
+        practical: true
+      });
+
+    }
+
+    if (jrResult) {
+
+      candidates.push({
+        key: "jr",
+        name: "JR",
+        co2: jrResult.co2,
+        minutes: jrResult.time,
+        practical: true
+      });
+
+    }
+
     updateEcoDashboard(
       walkCo2,
       bikeCo2,
       carCo2,
       subwayCo2,
-      jrResult ? jrResult.co2 : null
+      jrResult ? jrResult.co2 : null,
+      candidates
     );
 
 
